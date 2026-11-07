@@ -1,0 +1,15 @@
+# OS metadata
+.DS_Store
+Thumbs.db
+
+# Editor directories
+.vscode/
+.idea/
+*.swp
+
+# Node / Scratch
+node_modules/
+npm-debug.log*
+*.log
+scratch/
+.tmp/
