@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>F-Play | Streaming Film & Anime Lengkap Tanpa Iklan Pop-up</title>
+  <meta name="description" content="Nonton streaming ribuan film bioskop terbaru, film lawas legendaris, dan anime resolusi HD gratis dengan multi-server tercepat dan tampilan teater sinematik.">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <header class="navbar" id="main-navbar">
+    <div class="nav-container">
+      <div class="nav-left">
+        <a href="#home" class="brand-logo" id="logo-link" title="Beranda F-Play">
+          <img src="assets/logo.svg" alt="F-Play Logo" class="brand-logo-img">
+        </a>
+        <nav class="nav-menu" aria-label="Navigasi Utama">
+          <button class="nav-item active" data-category="all" id="nav-all">Semua Film</button>
+          <button class="nav-item" data-category="now_playing" id="nav-now-playing">Terbaru & Tayang</button>
+          <button class="nav-item" data-category="classics" id="nav-classics">Film Lawas / Klasik</button>
+          <button class="nav-item" data-category="trending" id="nav-trending">Trending</button>
+          <button class="nav-item" data-category="anime" id="nav-anime">Anime</button>
+        </nav>
+      </div>
+
+      <div class="nav-right">
+        <!-- Live Search Bar with TMDB Instant Sync -->
+        <div class="search-box">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="text" id="search-input" placeholder="Cari film apa saja (terbaru atau lama)..." aria-label="Cari Film">
+          <button class="search-clear-btn" id="search-clear" aria-label="Hapus Pencarian" title="Hapus Pencarian">&times;</button>
+        </div>
+
+        <!-- Watchlist Button -->
+        <button class="btn-watchlist" id="btn-open-watchlist" title="Lihat Daftar Favorit">
+          <svg class="heart-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+          </svg>
+          <span class="btn-text">Favorit</span>
+          <span class="watchlist-badge" id="watchlist-count">0</span>
+        </button>
+
+        <!-- About Creator Button -->
+        <button class="btn-about-dev" id="btn-open-about" title="Tentang Pengembang (Gi∞ / @RobsHs)">
+          <svg class="dev-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <polyline points="16 18 22 12 16 6"></polyline>
+            <polyline points="8 6 2 12 8 18"></polyline>
+          </svg>
+          <span class="btn-text">Tentang Dev</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Wrapper -->
+  <main id="main-content">
+
+    <!-- VIEW 1: HOME & CATALOG BROWSING VIEW -->
+    <div id="home-view">
+      
+      <!-- Hero Billboard Spotlight -->
+      <section class="hero-billboard" id="hero-section">
+        <div class="hero-backdrop" id="hero-bg"></div>
+        <div class="hero-overlay"></div>
+        <div class="hero-container">
+          <div class="hero-content">
+            <div class="hero-badges">
+              <span class="badge-featured" id="hero-badge">SOROTAN F-PLAY</span>
+              <span class="badge-quality">4K ULTRA HD</span>
+              <span class="badge-rating" id="hero-rating">⭐ 8.9 / 10</span>
+            </div>
+            <h1 class="hero-title" id="hero-title">Memuat Sorotan Utama...</h1>
+            <div class="hero-meta">
+              <span id="hero-year">2026</span>
+              <span class="meta-dot">•</span>
+              <span id="hero-duration">Lengkap</span>
+              <span class="meta-dot">•</span>
+              <span id="hero-genre">Sinema Populer</span>
+            </div>
+            <p class="hero-synopsis" id="hero-synopsis">
+              Pilihan tontonan bioskop terfavorit minggu ini di F-Play. Tonton langsung dengan kualitas visual maksimal dan server tercepat.
+            </p>
+            <div class="hero-actions">
+              <button class="btn btn-primary" id="btn-hero-play">
+                <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20" aria-hidden="true">
+                  <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                </svg>
+                <span>Nonton Sekarang</span>
+              </button>
+              <button class="btn btn-secondary" id="btn-hero-trailer">
+                <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20" aria-hidden="true">
+                  <path d="M10 8.64L15.27 12 10 15.36V8.64M8 5v14l11-7L8 5z"/>
+                </svg>
+                <span>Lihat Trailer</span>
+              </button>
+              <button class="btn btn-glass" id="btn-hero-bookmark" title="Simpan ke Daftar Tontonan">
+                <svg class="heart-icon" viewBox="0 0 24 24" fill="currentColor" width="20" height="20" aria-hidden="true">
+                  <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                </svg>
+                <span id="hero-bookmark-text">Simpan Favorit</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Genre & Filter Chips -->
+      <div class="filter-bar-wrapper">
+        <div class="filter-scroll-container" id="filter-chips">
+          <button class="filter-chip active" data-genre="all">Semua Koleksi</button>
+          <button class="filter-chip" data-genre="28">Action</button>
+          <button class="filter-chip" data-genre="878">Sci-Fi</button>
+          <button class="filter-chip" data-genre="16">Anime / Animasi</button>
+          <button class="filter-chip" data-genre="18">Drama</button>
+          <button class="filter-chip" data-genre="12">Petualangan</button>
+          <button class="filter-chip" data-genre="27">Horor</button>
+          <button class="filter-chip" data-genre="35">Komedi</button>
+          <button class="filter-chip" data-genre="80">Kriminal</button>
+          <button class="filter-chip" data-genre="classics">Mahakarya Klasik</button>
+        </div>
+      </div>
+
+      <!-- Active Filter or Search Notice -->
+      <div class="search-status-bar" id="search-status" style="display: none;">
+        <p id="search-status-text">Menampilkan hasil pencarian</p>
+        <button class="btn-text-action" id="btn-reset-filter">Reset Pencarian</button>
+      </div>
+
+      <!-- Movie Catalog Section -->
+      <div class="catalog-sections" id="catalog-sections">
+        
+        <!-- Section 1: Rilis Terbaru & Box Office Realtime -->
+        <section class="movie-section" id="section-latest">
+          <div class="section-header">
+            <div class="section-title-wrapper">
+              <span class="section-indicator"></span>
+              <h2 class="section-title">Film Bioskop Rilis Terbaru</h2>
+            </div>
+            <span class="section-subtitle">Pembaruan otomatis real-time dari rilis bioskop global</span>
+          </div>
+          <div class="movie-grid" id="grid-latest"></div>
+        </section>
+
+        <!-- Section 2: Film Lawas & Karya Legendaris Sepanjang Masa -->
+        <section class="movie-section" id="section-classics">
+          <div class="section-header">
+            <div class="section-title-wrapper">
+              <span class="section-indicator indicator-gold"></span>
+              <h2 class="section-title">Film Lawas & Legendaris Sepanjang Masa</h2>
+            </div>
+            <span class="section-subtitle">Mahakarya klasik era 1970 hingga 2010 dengan rating tertinggi</span>
+          </div>
+          <div class="movie-grid" id="grid-classics"></div>
+        </section>
+
+        <!-- Section 3: Trending Minggu Ini -->
+        <section class="movie-section" id="section-trending">
+          <div class="section-header">
+            <div class="section-title-wrapper">
+              <span class="section-indicator"></span>
+              <h2 class="section-title">Trending Minggu Ini</h2>
+            </div>
+            <span class="section-subtitle">Paling sering ditonton oleh komunitas F-Play</span>
+          </div>
+          <div class="movie-grid" id="grid-trending"></div>
+        </section>
+
+        <!-- Section 4: Anime & Animasi Populer -->
+        <section class="movie-section" id="section-anime">
+          <div class="section-header">
+            <div class="section-title-wrapper">
+              <span class="section-indicator"></span>
+              <h2 class="section-title">Anime & Animasi Terbaik</h2>
+            </div>
+            <span class="section-subtitle">Dari Studio Ghibli, Makoto Shinkai, hingga anime shonen hits</span>
+          </div>
+          <div class="movie-grid" id="grid-anime"></div>
+        </section>
+
+        <!-- Live Search Results Grid (Visible when searching) -->
+        <section class="movie-section" id="section-search-results" style="display: none;">
+          <div class="section-header">
+            <div class="section-title-wrapper">
+              <span class="section-indicator"></span>
+              <h2 class="section-title">Hasil Pencarian Film (Database Global)</h2>
+            </div>
+          </div>
+          <div class="movie-grid" id="grid-search-results"></div>
+          <div class="empty-state" id="search-empty" style="display: none;">
+            <div class="empty-icon">🎬</div>
+            <h3>Film Tidak Ditemukan</h3>
+            <p>Ketik judul film dengan benar, atau coba kata kunci bahasa Inggris untuk film internasional.</p>
+          </div>
+        </section>
+
+      </div>
+
+    </div>
+
+    <!-- VIEW 2: DEDICATED CINEMA THEATER STAGE (ENAK DILIHAT DI PC & HP) -->
+    <div id="theater-view" style="display: none;">
+      
+      <!-- Theater Top Bar Navigation -->
+      <div class="theater-nav-bar">
+        <button class="btn-theater-back" id="btn-theater-back" title="Kembali ke Katalog (ESC)">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+          <span>Kembali ke Katalog</span>
+        </button>
+
+        <div class="theater-title-badge">
+          <h2 class="theater-movie-title-top" id="theater-movie-title-top">Judul Film</h2>
+          <span class="theater-live-tag">Mode Bioskop</span>
+        </div>
+
+        <div class="theater-top-actions">
+          <button class="btn-share-link" id="btn-theater-share" title="Salin Link Tonton">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+              <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+            </svg>
+            <span class="btn-share-text">Bagi Link</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Cinema Screen Stage -->
+      <div class="theater-stage-wrapper">
+        <div class="theater-stage">
+          <!-- Loading State Skeleton -->
+          <div class="theater-loader" id="theater-loader">
+            <div class="spinner-ring"></div>
+            <p class="loading-status-text">Menghubungkan ke jalur video streaming...</p>
+            <span class="loading-subtext">Menyiapkan pemutar video berkualitas tinggi. Silakan tunggu beberapa detik.</span>
+          </div>
+
+          <!-- Video Stream Frame (100% Widescreen, No Sandboxing Error) -->
+          <iframe 
+            id="video-stream-iframe" 
+            src="" 
+            title="Pemutar Video F-Play" 
+            frameborder="0" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen" 
+            allowfullscreen>
+          </iframe>
+        </div>
+      </div>
+
+      <!-- Server Switcher Bar (Sleek Clean Pills, No Ugly Scrollbars) -->
+      <div class="theater-server-container">
+        <div class="theater-server-bar">
+          <span class="server-bar-label">Pilih Server:</span>
+          <div class="server-pills-list" id="theater-server-list">
+            <button class="pill-server active" data-server="server1" id="srv-1">
+              <span class="srv-dot"></span>
+              Server 1 (VidLink - Cepat & Bersih)
+            </button>
+            <button class="pill-server" data-server="server2" id="srv-2">
+              <span class="srv-dot"></span>
+              Server 2 (VidSrc CC v2)
+            </button>
+            <button class="pill-server" data-server="server3" id="srv-3">
+              <span class="srv-dot"></span>
+              Server 3 (Embed.su)
+            </button>
+            <button class="pill-server" data-server="server4" id="srv-4">
+              <span class="srv-dot"></span>
+              Server 4 (VidSrc TO)
+            </button>
+            <button class="pill-server" data-server="server5" id="srv-5">
+              <span class="srv-dot"></span>
+              Server 5 (VidSrc XYZ)
+            </button>
+            <button class="pill-server" data-server="server6" id="srv-6">
+              <span class="srv-dot"></span>
+              Server 6 (MultiEmbed Backup)
+            </button>
+            <button class="pill-server" data-server="trailer" id="srv-trailer">
+              <span class="srv-dot"></span>
+              Trailer Resmi HD
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Movie Details Under Player -->
+      <div class="theater-details-container">
+        <div class="theater-info-main">
+          
+          <div class="theater-title-row">
+            <div>
+              <h1 class="theater-movie-title" id="theater-movie-title">Judul Film</h1>
+              <div class="theater-metadata-badges">
+                <span class="badge-rating" id="theater-rating">⭐ 8.9 / 10</span>
+                <span class="badge-year" id="theater-year">2024</span>
+                <span class="badge-quality" id="theater-quality">4K ULTRA HD</span>
+                <span class="badge-duration" id="theater-duration">2j 8m</span>
+              </div>
+            </div>
+
+            <!-- Action Buttons: Favorite & Fullscreen -->
+            <div class="theater-action-group">
+              <button class="btn btn-secondary btn-sm" id="btn-theater-bookmark">
+                <svg class="heart-icon" viewBox="0 0 24 24" fill="currentColor" width="16" height="16" aria-hidden="true">
+                  <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                </svg>
+                <span id="theater-bookmark-label">Simpan Favorit</span>
+              </button>
+
+              <button class="btn btn-glass btn-sm" id="btn-theater-fullscreen" title="Layar Penuh">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+                </svg>
+                <span>Layar Penuh</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Genres Tags -->
+          <div class="theater-genres-list" id="theater-genres"></div>
+
+          <!-- Synopsis -->
+          <div class="theater-synopsis-box">
+            <h3 class="theater-synopsis-label">Sinopsis</h3>
+            <p class="theater-synopsis-text" id="theater-synopsis">Sinopsis lengkap film...</p>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Recommended / Up Next Row -->
+      <section class="theater-recommendations">
+        <div class="section-header">
+          <div class="section-title-wrapper">
+            <span class="section-indicator"></span>
+            <h2 class="section-title">Rekomendasi Film Serupa & Populer</h2>
+          </div>
+          <span class="section-subtitle">Lanjut nonton film seru lainnya</span>
+        </div>
+        <div class="movie-grid" id="grid-theater-recommended"></div>
+      </section>
+
+    </div>
+
+  </main>
+
+  <!-- Watchlist Drawer / Modal -->
+  <div class="watchlist-drawer" id="watchlist-drawer" role="dialog" aria-modal="true" aria-labelledby="watchlist-title" style="display: none;">
+    <div class="drawer-backdrop" id="watchlist-backdrop-btn"></div>
+    <div class="drawer-content">
+      <div class="drawer-header">
+        <div class="drawer-title-box">
+          <svg class="heart-icon icon-red" viewBox="0 0 24 24" fill="currentColor" width="22" height="22">
+            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+          </svg>
+          <h2 class="drawer-title" id="watchlist-title">Daftar Tontonan Saya</h2>
+        </div>
+        <button class="drawer-close-btn" id="btn-close-watchlist" aria-label="Tutup Daftar Favorit">&times;</button>
+      </div>
+      <div class="drawer-body">
+        <div class="watchlist-grid" id="watchlist-grid"></div>
+        <div class="empty-state" id="watchlist-empty">
+          <div class="empty-icon">🍿</div>
+          <h3>Daftar Favorit Masih Kosong</h3>
+          <p>Belum ada film yang kamu simpan. Klik ikon hati pada poster film apa saja untuk menyimpannya di sini.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Floating Toast Notification -->
+  <div class="toast-notification" id="toast-notify" role="alert" aria-live="assertive">
+    <span class="toast-message" id="toast-message">Notifikasi</span>
+  </div>
+
+  <!-- About Creator & Architect Modal (Gi∞ / RobsHs) -->
+  <div class="about-modal" id="about-modal" role="dialog" aria-modal="true" aria-labelledby="about-title" style="display: none;">
+    <div class="about-backdrop" id="about-backdrop-btn"></div>
+    <div class="about-dialog">
+      <div class="about-header">
+        <div class="about-header-tag">
+          <span class="pulse-dot-red"></span>
+          <span>DOSSIER // ARCHITECT &amp; CREATOR</span>
+        </div>
+        <button class="about-close-btn" id="btn-close-about" aria-label="Tutup Dialog Tentang Dev">&times;</button>
+      </div>
+
+      <div class="about-body">
+        <!-- Hero Developer Profile Card -->
+        <div class="dev-profile-card">
+          <div class="dev-avatar-container">
+            <img src="assets/developer.jpg" alt="Gi∞ (@RobsHs)" class="dev-avatar-img" onerror="this.onerror=null; this.src='https://avatars.githubusercontent.com/u/101894326?v=4';">
+            <span class="dev-avatar-badge">Gi∞</span>
+          </div>
+
+          <div class="dev-header-meta">
+            <h2 class="dev-name" id="about-title">Gi∞</h2>
+            <p class="dev-handles">
+              <span class="dev-handle-primary">Gi∞</span>
+              <span class="dev-dot">•</span>
+              <a href="https://github.com/RobsHs" target="_blank" rel="noopener noreferrer" class="dev-handle-github">@RobsHs</a>
+              <span class="dev-dot">•</span>
+              <span class="dev-location">Pacitan, Indonesia</span>
+            </p>
+            
+            <div class="dev-shield-tags">
+              <span class="shield-badge badge-crimson">IDENTITY: ARTIFISIAL DEVELOPER</span>
+              <span class="shield-badge badge-dark">DOMAIN: FULL-STACK &amp; AI SYSTEMS</span>
+              <span class="shield-badge badge-dark">16,500+ COMMITS</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Philosophy Statement -->
+        <div class="about-philosophy-quote">
+          <p class="quote-text">
+            "Architecture guided by human craftsmanship, accelerated by machine intelligence. Clean, typed, maintainable, and built for real-world resilience."
+          </p>
+          <span class="quote-author">Gi∞ (@RobsHs) // Artifisial Developer Philosophy</span>
+        </div>
+
+        <!-- About Description -->
+        <div class="about-content-section">
+          <h3 class="about-section-heading">
+            <span class="heading-icon">⚡</span>
+            <span>Tentang Pengembang &amp; Visi F-Play</span>
+          </h3>
+          <p class="about-paragraph">
+            F-Play dikonsep dan dirancang oleh <strong>Gi∞ (@RobsHs)</strong> sebagai bukti implementasi platform streaming video modern dengan standar <em>zero-backend footprint</em>, arsitektur sinkronisasi TMDB global real-time (tahan hingga 2030+), sistem multi-server tanpa eror sandboxing, serta tampilan teater sinematik bebas gangguan iklan.
+          </p>
+        </div>
+
+        <!-- Core Technical Arsenal -->
+        <div class="about-content-section">
+          <h3 class="about-section-heading">
+            <span class="heading-icon">🛠️</span>
+            <span>Core Technical Arsenal</span>
+          </h3>
+          <div class="tech-stack-chips">
+            <span class="tech-chip">TypeScript</span>
+            <span class="tech-chip">Next.js 15</span>
+            <span class="tech-chip">React 19</span>
+            <span class="tech-chip">Node.js</span>
+            <span class="tech-chip">Python 3.12</span>
+            <span class="tech-chip">Modern C++23</span>
+            <span class="tech-chip">Google Gemini AI</span>
+            <span class="tech-chip">Tailwind CSS</span>
+            <span class="tech-chip">DevSecOps</span>
+            <span class="tech-chip">REST &amp; TMDB API</span>
+          </div>
+        </div>
+
+        <!-- Curated Projects by Gi∞ -->
+        <div class="about-content-section">
+          <h3 class="about-section-heading">
+            <span class="heading-icon">🚀</span>
+            <span>Karya Unggulan Lainnya oleh Gi∞ (@RobsHs)</span>
+          </h3>
+          <div class="featured-projects-list">
+            <a href="https://github.com/RobsHs/AI-ME" target="_blank" rel="noopener noreferrer" class="project-mini-item">
+              <div class="project-mini-info">
+                <strong>AI-ME Assistant</strong>
+                <span>Native C++23 Direct2D AI Voice Typing &amp; Coding Automation</span>
+              </div>
+              <span class="project-mini-link">&rarr;</span>
+            </a>
+            <a href="https://github.com/RobsHs/AegisScan" target="_blank" rel="noopener noreferrer" class="project-mini-item">
+              <div class="project-mini-info">
+                <strong>AegisScan</strong>
+                <span>High-Speed DevSecOps Security Exposure &amp; Vulnerability Auditor</span>
+              </div>
+              <span class="project-mini-link">&rarr;</span>
+            </a>
+            <a href="https://github.com/RobsHs/QR-PRO" target="_blank" rel="noopener noreferrer" class="project-mini-item">
+              <div class="project-mini-info">
+                <strong>QR-PRO</strong>
+                <span>High-Performance Dynamic QR Code Generator &amp; Scanner Suite</span>
+              </div>
+              <span class="project-mini-link">&rarr;</span>
+            </a>
+            <a href="https://github.com/RobsHs/MacOS-Web-Simulator" target="_blank" rel="noopener noreferrer" class="project-mini-item">
+              <div class="project-mini-info">
+                <strong>MacOS Web Simulator</strong>
+                <span>Desktop-grade browser Web OS simulation in React &amp; TypeScript</span>
+              </div>
+              <span class="project-mini-link">&rarr;</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Connect & Links Footer -->
+        <div class="about-actions-row">
+          <a href="https://github.com/RobsHs" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+              <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+            </svg>
+            <span>GitHub @RobsHs</span>
+          </a>
+
+          <a href="https://instagram.com/dodot_coy" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+              <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+              <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+            </svg>
+            <span>Instagram @dodot_coy</span>
+          </a>
+
+          <a href="mailto:Fredapacitan@gmail.com" class="btn btn-glass btn-sm">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+              <polyline points="22,6 12,13 2,6"></polyline>
+            </svg>
+            <span>Email Gi∞</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="main-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <a href="#home" class="brand-logo footer-logo" title="Beranda F-Play">
+          <img src="assets/logo.svg" alt="F-Play Logo" class="brand-logo-img">
+        </a>
+        <p class="footer-tagline">Platform streaming film terlengkap dan anime gratis dengan multi-server tercepat &amp; tampilan teater bioskop.</p>
+        <button class="btn-footer-creator" id="btn-footer-about" title="Buka Profil Pengembang">
+          Dikonsep &amp; Dibangun oleh <strong>Gi∞ (@RobsHs)</strong> • Artifisial Developer &raquo;
+        </button>
+      </div>
+      <div class="footer-info">
+        <p class="footer-disclaimer">
+          F-Play menggunakan API publik The Movie Database (TMDB) untuk katalog metadata, serta iframe embed terdistribusi untuk streaming video. F-Play tidak mengunggah atau menyimpan berkas video di server lokal.
+        </p>
+        <p class="footer-copy">&copy; 2026 F-Play. Diciptakan oleh Gi∞ (@RobsHs). Hak cipta milik masing-masing pemilik konten.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
