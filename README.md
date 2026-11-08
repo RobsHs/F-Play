@@ -15,7 +15,7 @@
     <img src="https://img.shields.io/badge/ARCHITECT-GI%E2%88%9E%20%7C%20%40ROBSHS-0c0f17?style=for-the-badge&logo=probot&logoColor=ff003c" alt="Architect" />
   </a>
   <img src="https://img.shields.io/badge/COMMITS-30%2B%20PRODUCTION-0c0f17?style=for-the-badge&logo=git&logoColor=10b981" alt="Commits" />
-  <img src="https://img.shields.io/badge/LICENSE-MIT-0c0f17?style=for-the-badge&color=f5c518" alt="License" />
+  <img src="https://img.shields.io/badge/LICENSE-ALL%20RIGHTS%20RESERVED-0c0f17?style=for-the-badge&color=ff003c" alt="License" />
 </p>
 
 ---
@@ -123,4 +123,4 @@ Operating at the intersection of deep human software engineering and cutting-edg
 ## 📜 Disclaimer & Licensing
 
 - **Disclaimer**: F-Play utilizes publicly accessible APIs from The Movie Database (TMDB) for metadata indexing and distributed third-party embed servers for video rendering. F-Play does not host, upload, or store any multimedia files on local servers.
-- **License**: Released under the [MIT License](LICENSE). Copyright (c) 2026 Gi∞ (@RobsHs).
+- **License & Copyright**: Proprietary - All Rights Reserved. Copyright (c) 2026 Gi∞ (@RobsHs). This project represents original creative conceptualization and architectural design. Copying, cloning, mirroring, redistributing, or commercial exploitation of any part of this source code or design without explicit written consent is strictly prohibited. See [LICENSE](LICENSE) for complete legal terms.
