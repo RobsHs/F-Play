@@ -5,10 +5,11 @@
  * tanpa perlu koding ulang manual sampai tahun 2030 dan seterusnya.
  */
 
-// TMDB Public API Configuration
+// TMDB Public API Configuration & Responsive Lightweight Image Optimizer
+const isMobileClient = typeof window !== 'undefined' && (window.innerWidth <= 768 || /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent));
 const TMDB_API_KEY = '4e44d9029b1270a757cddc766a1bcb63';
-const TMDB_IMAGE_BASE = 'https://image.tmdb.org/t/p/w500';
-const TMDB_BACKDROP_BASE = 'https://image.tmdb.org/t/p/original';
+const TMDB_IMAGE_BASE = isMobileClient ? 'https://image.tmdb.org/t/p/w342' : 'https://image.tmdb.org/t/p/w500';
+const TMDB_BACKDROP_BASE = isMobileClient ? 'https://image.tmdb.org/t/p/w780' : 'https://image.tmdb.org/t/p/w1280';
 
 // Fallback Poster SVG Lokal Berkualitas Tinggi (Menjamin tidak ada thumbnail kosong)
 const FALLBACK_POSTER_SVG = `data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22300%22%20height%3D%22450%22%20viewBox%3D%220%200%20300%20450%22%3E%3Crect%20fill%3D%22%23161a24%22%20width%3D%22300%22%20height%3D%22450%22%2F%3E%3Ccircle%20cx%3D%22150%22%20cy%3D%22190%22%20r%3D%2236%22%20fill%3D%22%23e50914%22%20fill-opacity%3D%220.2%22%2F%3E%3Cpolygon%20points%3D%22143%2C175%20163%2C190%20143%2C205%22%20fill%3D%22%23e50914%22%2F%3E%3Ctext%20fill%3D%22%23ffffff%22%20font-family%3D%22system-ui%2Csans-serif%22%20font-size%3D%2220%22%20font-weight%3D%22bold%22%20x%3D%2250%25%22%20y%3D%22255%22%20text-anchor%3D%22middle%22%3EF-PLAY%3C%2Ftext%3E%3Ctext%20fill%3D%22%23949db0%22%20font-family%3D%22system-ui%2Csans-serif%22%20font-size%3D%2213%22%20x%3D%2250%25%22%20y%3D%22280%22%20text-anchor%3D%22middle%22%3ESinema%20HD%3C%2Ftext%3E%3C%2Fsvg%3E`;
@@ -57,8 +58,8 @@ const FALLBACK_CATALOG = [
     rating: '8.9',
     quality: '4K ULTRA HD',
     genres: ['Action', 'Comedy', 'Sci-Fi'],
-    poster: 'https://image.tmdb.org/t/p/w500/8cdWjvZQUExUUTzyp4t6EDMubfO.jpg',
-    backdrop: 'https://image.tmdb.org/t/p/original/yDHYTfaEtcuIMvxURQIahvtMRbt.jpg',
+    poster: 'https://image.tmdb.org/t/p/w342/8cdWjvZQUExUUTzyp4t6EDMubfO.jpg',
+    backdrop: 'https://image.tmdb.org/t/p/w780/yDHYTfaEtcuIMvxURQIahvtMRbt.jpg',
     trailerId: 'uJMCNJP2ipI',
     synopsis: 'Wade Wilson yang telah pensiun ditarik kembali oleh TVA untuk menghadapi krisis kehancuran semesta bersama Wolverine.'
   },
@@ -70,8 +71,8 @@ const FALLBACK_CATALOG = [
     rating: '9.0',
     quality: '4K ULTRA HD',
     genres: ['Sci-Fi', 'Adventure', 'Drama'],
-    poster: 'https://image.tmdb.org/t/p/w500/1pdfLvkbY9ohJlCjQH2CZjjYVvJ.jpg',
-    backdrop: 'https://image.tmdb.org/t/p/original/xOMo8BRK7PfcJv9JCnx7s5200SV.jpg',
+    poster: 'https://image.tmdb.org/t/p/w342/1pdfLvkbY9ohJlCjQH2CZjjYVvJ.jpg',
+    backdrop: 'https://image.tmdb.org/t/p/w780/xOMo8BRK7PfcJv9JCnx7s5200SV.jpg',
     trailerId: 'Way9Dexny3w',
     synopsis: 'Paul Atreides bersatu dengan Chani dan kaum Fremen untuk membalas dendam terhadap para konspirator di planet Arrakis.'
   },
@@ -83,8 +84,8 @@ const FALLBACK_CATALOG = [
     rating: '9.3',
     quality: 'HD',
     genres: ['Drama', 'Crime'],
-    poster: 'https://image.tmdb.org/t/p/w500/9cqNxx0GxF0bflZmeSMuL5tnGzr.jpg',
-    backdrop: 'https://image.tmdb.org/t/p/original/kXfqNm225ZuzwnrLvTG4hw1ndDd.jpg',
+    poster: 'https://image.tmdb.org/t/p/w342/9cqNxx0GxF0bflZmeSMuL5tnGzr.jpg',
+    backdrop: 'https://image.tmdb.org/t/p/w780/kXfqNm225ZuzwnrLvTG4hw1ndDd.jpg',
     trailerId: 'PLl99DlL6b4',
     synopsis: 'Bankir Andy Dufresne menjalani hukuman seumur hidup di penjara Shawshank dan merajut harapan kebebasan yang luar biasa.'
   },
@@ -96,8 +97,8 @@ const FALLBACK_CATALOG = [
     rating: '9.0',
     quality: '4K ULTRA HD',
     genres: ['Action', 'Crime', 'Drama'],
-    poster: 'https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg',
-    backdrop: 'https://image.tmdb.org/t/p/original/nMKdUUepR0i5zn0y1T4CsSB5chy.jpg',
+    poster: 'https://image.tmdb.org/t/p/w342/qJ2tW6WMUDux911r6m7haRef0WH.jpg',
+    backdrop: 'https://image.tmdb.org/t/p/w780/nMKdUUepR0i5zn0y1T4CsSB5chy.jpg',
     trailerId: 'EXeTwQWrcwY',
     synopsis: 'Batman menghadapi musuh paling berbahaya: The Joker, yang ingin menjerumuskan Gotham ke dalam anarki total.'
   }
@@ -398,7 +399,7 @@ function createMovieCard(movie) {
 
   card.innerHTML = `
     <div class="card-poster-wrapper">
-      <img src="${movie.poster || FALLBACK_POSTER_SVG}" alt="Poster ${movie.title}" class="card-poster" loading="lazy" onerror="this.onerror=null; this.src=FALLBACK_POSTER_SVG;">
+      <img src="${movie.poster || FALLBACK_POSTER_SVG}" alt="Poster ${movie.title}" class="card-poster" loading="lazy" decoding="async" width="342" height="513" onerror="this.onerror=null; this.src=FALLBACK_POSTER_SVG;">
       <div class="card-badges">
         <span class="card-rating-badge">⭐ ${displayRating}</span>
         <span class="card-quality-badge">${movie.quality || 'HD'}</span>
@@ -443,9 +444,10 @@ function createMovieCard(movie) {
 }
 
 /* --- Render Skeleton Loading Cards --- */
-function renderSkeletonGrid(containerEl, count = 8) {
+function renderSkeletonGrid(containerEl, count = (isMobileClient ? 4 : 8)) {
   if (!containerEl) return;
   containerEl.innerHTML = '';
+  const fragment = document.createDocumentFragment();
   for (let i = 0; i < count; i++) {
     const skel = document.createElement('div');
     skel.className = 'movie-card';
@@ -457,8 +459,22 @@ function renderSkeletonGrid(containerEl, count = 8) {
         <div style="height:10px; background:#1b202d; border-radius:4px; width:40%;"></div>
       </div>
     `;
-    containerEl.appendChild(skel);
+    fragment.appendChild(skel);
   }
+  containerEl.appendChild(fragment);
+}
+
+/* --- High Performance DOM Grid Renderer (Single Paint via DocumentFragment) --- */
+function populateMovieGrid(gridEl, movies) {
+  if (!gridEl) return;
+  gridEl.innerHTML = '';
+  const fragment = document.createDocumentFragment();
+  const maxItems = isMobileClient ? 10 : 16;
+  const list = movies.slice(0, maxItems);
+  list.forEach(movie => {
+    fragment.appendChild(createMovieCard(movie));
+  });
+  gridEl.appendChild(fragment);
 }
 
 /* --- Master Section Loader (Otomatis & Real-Time) --- */
@@ -491,36 +507,21 @@ async function loadAllSections() {
     }
 
     // Render Grid 1: Rilis Terbaru & Sedang Tayang
-    if (gridLatest) {
-      gridLatest.innerHTML = '';
-      latest.forEach(movie => gridLatest.appendChild(createMovieCard(movie)));
-    }
+    populateMovieGrid(gridLatest, latest);
 
     // Render Grid 2: Film Lawas & Klasik Sepanjang Masa
-    if (gridClassics) {
-      gridClassics.innerHTML = '';
-      classics.forEach(movie => gridClassics.appendChild(createMovieCard(movie)));
-    }
+    populateMovieGrid(gridClassics, classics);
 
     // Render Grid 3: Trending Minggu Ini
-    if (gridTrending) {
-      gridTrending.innerHTML = '';
-      trending.forEach(movie => gridTrending.appendChild(createMovieCard(movie)));
-    }
+    populateMovieGrid(gridTrending, trending);
 
     // Render Grid 4: Anime & Animasi Populer
-    if (gridAnime) {
-      gridAnime.innerHTML = '';
-      anime.forEach(movie => gridAnime.appendChild(createMovieCard(movie)));
-    }
+    populateMovieGrid(gridAnime, anime);
 
   } catch (err) {
     console.error('Error saat inisialisasi catalog:', err);
     // Fallback darurat
-    if (gridLatest) {
-      gridLatest.innerHTML = '';
-      FALLBACK_CATALOG.forEach(m => gridLatest.appendChild(createMovieCard(m)));
-    }
+    populateMovieGrid(gridLatest, FALLBACK_CATALOG);
   }
 
   updateWatchlistBadge();
@@ -659,12 +660,14 @@ function renderTheaterRecommendations(current) {
 
   const allList = Array.from(memoryMovieStore.values());
   const filtered = allList.filter(m => m.tmdbId !== current.tmdbId);
-  const recs = (filtered.length >= 4) ? filtered.slice(0, 8) : FALLBACK_CATALOG.filter(m => m.tmdbId !== current.tmdbId);
+  const recLimit = isMobileClient ? 4 : 8;
+  const recs = (filtered.length >= 4) ? filtered.slice(0, recLimit) : FALLBACK_CATALOG.filter(m => m.tmdbId !== current.tmdbId).slice(0, recLimit);
 
+  const fragment = document.createDocumentFragment();
   recs.forEach(m => {
-    const card = createMovieCard(m);
-    container.appendChild(card);
+    fragment.appendChild(createMovieCard(m));
   });
+  container.appendChild(fragment);
 }
 
 /* --- Watchlist Drawer Renderer --- */
@@ -803,9 +806,12 @@ async function performFilterAndSearch() {
       searchEmpty.style.display = 'block';
     } else {
       searchEmpty.style.display = 'none';
-      results.forEach(movie => {
-        searchGrid.appendChild(createMovieCard(movie));
+      const fragment = document.createDocumentFragment();
+      const maxResults = isMobileClient ? 16 : 28;
+      results.slice(0, maxResults).forEach(movie => {
+        fragment.appendChild(createMovieCard(movie));
       });
+      searchGrid.appendChild(fragment);
     }
   }
 }

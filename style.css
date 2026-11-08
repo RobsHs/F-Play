@@ -438,7 +438,6 @@ input:focus-visible {
   background: rgba(255, 255, 255, 0.12);
   color: #fff;
   border: 1px solid rgba(255, 255, 255, 0.18);
-  backdrop-filter: blur(8px);
 }
 
 .btn-secondary:hover {
@@ -548,6 +547,8 @@ input:focus-visible {
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 480px;
 }
 
 .section-header {
@@ -594,7 +595,7 @@ input:focus-visible {
   gap: 1.35rem;
 }
 
-/* Movie Card Item */
+/* Movie Card Item (GPU Optimized with content-visibility) */
 .movie-card {
   position: relative;
   background: var(--bg-surface);
@@ -604,14 +605,38 @@ input:focus-visible {
   display: flex;
   flex-direction: column;
   cursor: pointer;
-  transition: transform var(--transition-normal), box-shadow var(--transition-normal), border-color var(--transition-normal);
+  content-visibility: auto;
+  contain-intrinsic-size: 160px 280px;
+  transition: border-color var(--transition-fast);
   box-shadow: var(--shadow-card);
 }
 
-.movie-card:hover {
-  transform: translateY(-6px);
-  border-color: rgba(255, 255, 255, 0.22);
-  box-shadow: var(--shadow-hover);
+.movie-card:active {
+  transform: scale(0.98);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .movie-card {
+    transition: transform var(--transition-normal), box-shadow var(--transition-normal), border-color var(--transition-normal);
+  }
+
+  .movie-card:hover {
+    transform: translateY(-6px);
+    border-color: rgba(255, 255, 255, 0.22);
+    box-shadow: var(--shadow-hover);
+  }
+
+  .movie-card:hover .card-poster {
+    transform: scale(1.05);
+  }
+
+  .movie-card:hover .card-play-overlay {
+    opacity: 1;
+  }
+
+  .movie-card:hover .play-circle-icon {
+    transform: scale(1);
+  }
 }
 
 .card-poster-wrapper {
@@ -630,10 +655,6 @@ input:focus-visible {
   display: block;
 }
 
-.movie-card:hover .card-poster {
-  transform: scale(1.05);
-}
-
 .card-badges {
   position: absolute;
   top: 8px;
@@ -645,27 +666,25 @@ input:focus-visible {
 }
 
 .card-rating-badge {
-  background: rgba(8, 9, 13, 0.85);
-  backdrop-filter: blur(4px);
+  background: rgba(10, 12, 18, 0.94);
   color: var(--color-gold);
   font-family: var(--font-mono);
   font-size: 0.75rem;
   font-weight: 700;
   padding: 0.2rem 0.45rem;
   border-radius: var(--radius-sm);
-  border: 1px solid rgba(245, 197, 24, 0.3);
+  border: 1px solid rgba(245, 197, 24, 0.35);
 }
 
 .card-quality-badge {
-  background: rgba(8, 9, 13, 0.85);
-  backdrop-filter: blur(4px);
+  background: rgba(10, 12, 18, 0.94);
   color: #fff;
   font-family: var(--font-mono);
   font-size: 0.68rem;
   font-weight: 700;
   padding: 0.15rem 0.4rem;
   border-radius: var(--radius-sm);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.18);
 }
 
 /* Card Bookmark Trigger */
@@ -674,9 +693,8 @@ input:focus-visible {
   top: 8px;
   right: 8px;
   z-index: 3;
-  background: rgba(8, 9, 13, 0.75);
-  backdrop-filter: blur(6px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(10, 12, 18, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.18);
   color: var(--color-text-muted);
   width: 34px;
   height: 34px;
@@ -685,7 +703,7 @@ input:focus-visible {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all var(--transition-fast);
+  transition: background var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
 }
 
 .card-bookmark-btn:hover {
@@ -714,10 +732,6 @@ input:focus-visible {
   z-index: 2;
 }
 
-.movie-card:hover .card-play-overlay {
-  opacity: 1;
-}
-
 .play-circle-icon {
   width: 52px;
   height: 52px;
@@ -730,10 +744,6 @@ input:focus-visible {
   box-shadow: 0 4px 20px rgba(229, 9, 20, 0.6);
   transform: scale(0.85);
   transition: transform var(--transition-fast);
-}
-
-.movie-card:hover .play-circle-icon {
-  transform: scale(1);
 }
 
 /* Card Details Bottom */
@@ -1516,6 +1526,28 @@ input:focus-visible {
 }
 
 @media (max-width: 768px) {
+  /* Mobile Performance & GPU Turbo (Silky Smooth 60FPS) */
+  .navbar {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: rgba(8, 9, 13, 0.96);
+  }
+
+  .theater-nav-bar {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: rgba(8, 9, 13, 0.96);
+  }
+
+  .theater-stage-wrapper::before {
+    display: none !important;
+  }
+
+  .movie-card {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
+    contain-intrinsic-size: 140px 240px;
+  }
+
   .nav-menu {
     display: none; /* Mobile menu drawer or horizontal chips handled */
   }
