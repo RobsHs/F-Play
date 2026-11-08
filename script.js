@@ -726,22 +726,6 @@ function closeWatchlistDrawer() {
   }
 }
 
-/* --- About Creator & Architect Modal Controller --- */
-function openAboutModal() {
-  const modal = document.getElementById('about-modal');
-  if (modal) {
-    modal.style.display = 'flex';
-    document.body.style.overflow = 'hidden';
-  }
-}
-
-function closeAboutModal() {
-  const modal = document.getElementById('about-modal');
-  if (modal) {
-    modal.style.display = 'none';
-    document.body.style.overflow = '';
-  }
-}
 
 /* --- Live Search & Genre Filter Engine --- */
 async function performFilterAndSearch() {
@@ -926,26 +910,6 @@ function setupEventListeners() {
     watchlistBackdrop.addEventListener('click', closeWatchlistDrawer);
   }
 
-  // 3.1 About Creator Modal Listeners
-  const btnOpenAbout = document.getElementById('btn-open-about');
-  if (btnOpenAbout) {
-    btnOpenAbout.addEventListener('click', openAboutModal);
-  }
-
-  const btnFooterAbout = document.getElementById('btn-footer-about');
-  if (btnFooterAbout) {
-    btnFooterAbout.addEventListener('click', openAboutModal);
-  }
-
-  const btnCloseAbout = document.getElementById('btn-close-about');
-  if (btnCloseAbout) {
-    btnCloseAbout.addEventListener('click', closeAboutModal);
-  }
-
-  const aboutBackdrop = document.getElementById('about-backdrop-btn');
-  if (aboutBackdrop) {
-    aboutBackdrop.addEventListener('click', closeAboutModal);
-  }
 
   // 4. Live Search Input dengan Debounce 350ms
   const searchInput = document.getElementById('search-input');
@@ -1032,7 +996,6 @@ function setupEventListeners() {
     if (e.key === 'Escape') {
       closePlayerModal();
       closeWatchlistDrawer();
-      closeAboutModal();
     } else if (e.key === '/' && document.activeElement !== searchInput) {
       e.preventDefault();
       if (searchInput) searchInput.focus();

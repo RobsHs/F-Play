@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "site": "f-play-stream",
+    "site": "fplay",
     "public": ".",
     "ignore": [
       "firebase.json",

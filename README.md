@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/logo.svg" width="320" alt="F-Play Cinema Stream Logo" />
+  <img src="assets/logo.svg" width="320" alt="F-Play Cinema Logo" />
 </p>
 
 <p align="center">
@@ -8,19 +8,10 @@
 </p>
 
 <p align="center">
-  <a href="https://f-play-stream.web.app" target="_blank">
-    <img src="https://img.shields.io/badge/LIVE%20WEB%20APP-F--PLAY--STREAM.WEB.APP-e50914?style=for-the-badge&logo=firebase&logoColor=ffffff" alt="Live Web App" />
+  <a href="https://fplay.web.app" target="_blank">
+    <img src="https://img.shields.io/badge/LIVE%20WEB%20APP-FPLAY.WEB.APP-e50914?style=for-the-badge&logo=firebase&logoColor=ffffff" alt="Live Web App" />
   </a>
-</p>
-
-<p align="center">
-  <a href="https://github.com/RobsHs/F-Play/stargazers">
-    <img src="https://img.shields.io/github/stars/RobsHs/F-Play?style=for-the-badge&logo=github&color=e50914&labelColor=0c0f17" alt="GitHub Stars" />
-  </a>
-  <a href="https://github.com/RobsHs">
-    <img src="https://img.shields.io/badge/ARCHITECT-GI%E2%88%9E%20%7C%20%40ROBSHS-0c0f17?style=for-the-badge&logo=probot&logoColor=ff003c" alt="Architect" />
-  </a>
-  <img src="https://img.shields.io/badge/COMMITS-30%2B%20PRODUCTION-0c0f17?style=for-the-badge&logo=git&logoColor=10b981" alt="Commits" />
+  <img src="https://img.shields.io/badge/STATUS-PRODUCTION%20READY-0c0f17?style=for-the-badge&logo=vercel&logoColor=10b981" alt="Production Status" />
   <img src="https://img.shields.io/badge/LICENSE-ALL%20RIGHTS%20RESERVED-0c0f17?style=for-the-badge&color=ff003c" alt="License" />
 </p>
 
@@ -28,16 +19,16 @@
 
 ## ⚡ Overview & Architectural Vision
 
-**F-Play** is a cutting-edge, zero-backend, pure frontend cinematic streaming web application designed and engineered by **Gi∞ (@RobsHs)**. 
+**F-Play** is a cutting-edge, zero-backend, pure frontend cinematic streaming web application engineered by the **F-Play Team**. 
 
 Built with performance, durability, and clean aesthetic ergonomics at its core, F-Play solves the common pitfalls of typical streaming web apps: broken players, annoying pop-up redirects, ugly modal frames, missing poster art, and outdated hardcoded databases.
 
 ### 🌟 Key Capabilities
 
-- 🎬 **Dedicated Cinema Theater Mode**: Replaces cramped, floating pop-up modals with a majestic 16:9 widescreen stage centered with cinema ambient backlight glow on desktop, and edge-to-edge immersive view on mobile.
-- 🔄 **Auto-Updating Real-Time Catalog (2024 - 2030+)**: Synchronizes directly with The Movie Database (TMDB) global API endpoints on runtime. Fresh cinema box-office releases in 2026, 2027, up through 2030 automatically appear without requiring any manual database maintenance.
+- 🎬 **Dedicated Cinema Theater Mode**: Replaces cramped floating pop-up modals with a majestic 16:9 widescreen stage centered with cinema ambient backlight glow on desktop, and edge-to-edge immersive view on mobile.
+- 🔄 **Auto-Updating Real-Time Catalog (2024 - 2030+)**: Synchronizes directly with The Movie Database (TMDB) global API endpoints on runtime. Fresh cinema box-office releases in 2026, 2027, up through 2030 automatically appear without requiring manual database maintenance.
 - 🚀 **7 Distributed Streaming Servers**: Instant one-click server failover (VidLink, VidSrc CC, Embed.su, VidSrc TO, VidSrc XYZ, MultiEmbed, and YouTube Official HD Trailers).
-- 🛡️ **Zero Sandboxing Error**: Engineered to ensure full compatibility with modern embed video providers without triggering anti-tamper `"Sandboxing is not allowed!"` exceptions.
+- 🛡️ **Zero Sandboxing Error**: Engineered to ensure full compatibility with modern embed video providers without triggering anti-tamper security exceptions.
 - 🎨 **Anti-Slop Craftsmanship**:
   - Zero em dashes across all copy and documentation.
   - No dead buttons: Every interactive element has an active, tested event handler.
@@ -67,12 +58,14 @@ Built with performance, durability, and clean aesthetic ergonomics at its core, 
 F-Play/
 ├── assets/
 │   ├── favicon.svg          # High-resolution vector favicon
-│   └── logo.svg             # Official F-Play Cinema Stream vector logo
+│   └── logo.svg             # Official F-Play Cinema vector logo
 ├── index.html               # Main application shell with Home & Theater views
 ├── style.css                # Pure modular CSS with tokens, theater stage, & mobile breakpoints
 ├── script.js                # Application controller, TMDB engine, multi-server logic, & watchlist
 ├── DESIGN.md                # Comprehensive design system and architectural documentation
-└── README.md                # Project documentation and engineering dossier
+├── firebase.json            # Firebase hosting configuration for fplay.web.app
+├── LICENSE                  # Proprietary intellectual property license
+└── README.md                # Project documentation
 ```
 
 ---
@@ -82,8 +75,8 @@ F-Play/
 F-Play is entirely self-contained with **zero dependencies** and **zero build steps**. You can run it instantly using any static web server:
 
 ```bash
-# Clone the repository
-git clone https://github.com/RobsHs/F-Play.git
+# Clone the repository (Private Repository)
+git clone <private-repository-url>
 
 # Enter the project directory
 cd F-Play
@@ -99,34 +92,7 @@ Open your browser at `http://localhost:8080` to experience F-Play.
 
 ---
 
-## 👨‍💻 About The Architect & Creator
-
-<p align="center">
-  <img src="assets/developer.jpg" width="110" style="border-radius: 50%; border: 3px solid #ff003c; box-shadow: 0 0 20px rgba(229, 9, 20, 0.4);" alt="Gi∞ (@RobsHs)" />
-</p>
-
-### **Gi∞ (@RobsHs)**
-*Artifisial Developer // AI-Augmented Systems Architect*  
-📍 Pacitan, Indonesia  
-
-> *"Architecture guided by human craftsmanship, accelerated by machine intelligence. Clean, typed, maintainable, and built for real-world resilience."*
-
-Operating at the intersection of deep human software engineering and cutting-edge artificial intelligence, with over **16,500+ production commits** across full-stack architectures, native desktop systems, and DevSecOps tooling.
-
-#### Selected Systems by Gi∞:
-- [**AI-ME Assistant**](https://github.com/RobsHs/AI-ME): Native C++23 Direct2D AI Voice Typing & Coding Automation Assistant.
-- [**AegisScan**](https://github.com/RobsHs/AegisScan): High-speed DevSecOps security exposure and vulnerability auditor.
-- [**QR-PRO**](https://github.com/RobsHs/QR-PRO): High-performance dynamic QR code generation & scanning suite.
-- [**MacOS-Web-Simulator**](https://github.com/RobsHs/MacOS-Web-Simulator): Desktop-grade browser Web OS simulation built with React and TypeScript.
-
-#### Connect with Gi∞:
-- 🌐 **GitHub**: [@RobsHs](https://github.com/RobsHs)
-- 📸 **Instagram**: [@dodot_coy](https://instagram.com/dodot_coy)
-- ✉️ **Email**: Fredapacitan@gmail.com
-
----
-
 ## 📜 Disclaimer & Licensing
 
 - **Disclaimer**: F-Play utilizes publicly accessible APIs from The Movie Database (TMDB) for metadata indexing and distributed third-party embed servers for video rendering. F-Play does not host, upload, or store any multimedia files on local servers.
-- **License & Copyright**: Proprietary - All Rights Reserved. Copyright (c) 2026 Gi∞ (@RobsHs). This project represents original creative conceptualization and architectural design. Copying, cloning, mirroring, redistributing, or commercial exploitation of any part of this source code or design without explicit written consent is strictly prohibited. See [LICENSE](LICENSE) for complete legal terms.
+- **License & Copyright**: Proprietary - All Rights Reserved. Copyright (c) 2026 F-Play. This project represents original creative conceptualization and architectural design. Copying, cloning, mirroring, redistributing, or commercial exploitation of any part of this source code or design without explicit written consent is strictly prohibited. See [LICENSE](LICENSE) for complete legal terms.
