@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 60" width="240" height="60" fill="none">
+  <defs>
+    <!-- Red Accent Gradient -->
+    <linearGradient id="fplay-grad-red" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff2a38" />
+      <stop offset="100%" stop-color="#b8050e" />
+    </linearGradient>
+
+    <!-- Metallic Border Gradient -->
+    <linearGradient id="fplay-grad-border" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff3344" stop-opacity="0.8" />
+      <stop offset="50%" stop-color="#3b1218" stop-opacity="0.4" />
+      <stop offset="100%" stop-color="#ff1a2b" stop-opacity="0.9" />
+    </linearGradient>
+
+    <!-- Surface Dark Gradient -->
+    <linearGradient id="fplay-grad-surface" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1c202d" />
+      <stop offset="100%" stop-color="#0e1118" />
+    </linearGradient>
+
+    <!-- Neon Glow Filter -->
+    <filter id="fplay-glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="3" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Left Icon Emblem (52x52) -->
+  <g transform="translate(4, 4)">
+    <!-- Outer Rounded Hexagon/Badge -->
+    <rect x="0" y="0" width="52" height="52" rx="14" fill="url(#fplay-grad-surface)" stroke="url(#fplay-grad-border)" stroke-width="2" />
+    
+    <!-- Ambient Inner Red Bloom -->
+    <circle cx="26" cy="26" r="16" fill="#e50914" fill-opacity="0.18" filter="url(#fplay-glow)" />
+
+    <!-- Stylized "F" + Play Glyph (Geometric & Cinematic) -->
+    <!-- Vertical Spine of F -->
+    <path d="M16 14 C16 12.89 16.89 12 18 12 L22 12 C23.11 12 24 12.89 24 14 L24 38 C24 39.11 23.11 40 22 40 L18 40 C16.89 40 16 39.11 16 38 Z" fill="#ffffff" />
+    
+    <!-- Top Horizontal Bar of F -->
+    <path d="M22 12 L35 12 C36.1 12 37 12.9 37 14 L37 18 C37 19.1 36.1 20 35 20 L22 20 Z" fill="#ffffff" />
+    
+    <!-- Middle Bar transforms into forward-facing Play Arrow -->
+    <path d="M22 24 L29 24 C30.2 24 31 24.6 31.6 25.4 L39 31 C39.8 31.6 39.8 32.8 39 33.4 L31.6 39 C31 39.8 30.2 40.4 29 40.4 L22 40.4 Z" fill="url(#fplay-grad-red)" filter="url(#fplay-glow)" />
+    
+    <!-- Sharp Play Triangle Tip Accent -->
+    <polygon points="30,26 40,32.2 30,38.4" fill="#ffffff" />
+  </g>
+
+  <!-- Brand Typography -->
+  <!-- "F" in Crimson Glow -->
+  <text x="68" y="38" font-family="'Plus Jakarta Sans', system-ui, -apple-system, sans-serif" font-size="30" font-weight="900" fill="url(#fplay-grad-red)" letter-spacing="0.5">F</text>
+  
+  <!-- Modern Hyphen -->
+  <text x="91" y="36" font-family="'Plus Jakarta Sans', system-ui, -apple-system, sans-serif" font-size="26" font-weight="800" fill="#ff4d5a">-</text>
+  
+  <!-- "PLAY" in Crisp Studio White -->
+  <text x="106" y="38" font-family="'Plus Jakarta Sans', system-ui, -apple-system, sans-serif" font-size="30" font-weight="900" fill="#ffffff" letter-spacing="1">PLAY</text>
+
+  <!-- Small Subtitle Pill -->
+  <rect x="69" y="44" width="76" height="12" rx="3" fill="#e50914" fill-opacity="0.15" />
+  <text x="73" y="53" font-family="'JetBrains Mono', monospace" font-size="8.5" font-weight="700" fill="#ff4d5a" letter-spacing="2">STREAM HD</text>
+</svg>
