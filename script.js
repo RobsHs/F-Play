@@ -36,15 +36,15 @@ const GENRE_MAP = {
   37: 'Western'
 };
 
-// 7 Provider Streaming Video Teruji & Bebas Sandbox Error
+// 7 Provider Streaming Video Teruji & Bebas Sandbox Error (Optimal Audio Playback)
 const STREAM_SERVERS = {
-  server1: (tmdbId) => `https://vidlink.pro/movie/${tmdbId}`,
-  server2: (tmdbId) => `https://vidsrc.cc/v2/embed/movie/${tmdbId}`,
+  server1: (tmdbId) => `https://vidlink.pro/movie/${tmdbId}?primaryColor=e50914&autoplay=false`,
+  server2: (tmdbId) => `https://vidsrc.cc/v2/embed/movie/${tmdbId}?autoPlay=false`,
   server3: (tmdbId) => `https://embed.su/embed/movie/${tmdbId}`,
   server4: (tmdbId) => `https://vidsrc.to/embed/movie/${tmdbId}`,
   server5: (tmdbId) => `https://vidsrc.xyz/embed/movie/${tmdbId}`,
   server6: (tmdbId) => `https://multiembed.mov/?video_id=${tmdbId}&tmdb=1`,
-  trailer: (trailerId) => `https://www.youtube.com/embed/${trailerId}?autoplay=1&rel=0`
+  trailer: (trailerId) => `https://www.youtube.com/embed/${trailerId}?autoplay=1&mute=0&rel=0`
 };
 
 // Fallback Cache Jika Pengguna Offline atau API Lambat

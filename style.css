@@ -1036,6 +1036,31 @@ input:focus-visible {
   line-height: 1.5;
 }
 
+/* Audio Tip Helper Pill */
+.theater-audio-tip-container {
+  background: #080a0f;
+  width: 100%;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.theater-audio-tip {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0.55rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-size: 0.8rem;
+  color: #93c5fd;
+  background: rgba(59, 130, 246, 0.06);
+  line-height: 1.4;
+}
+
+.theater-audio-tip svg {
+  color: #60a5fa;
+  flex-shrink: 0;
+}
+
 /* Theater Multi-Server Selector Bar (No Ugly Scrollbars!) */
 .theater-server-container {
   background: #0d1017;
