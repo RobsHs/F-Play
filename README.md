@@ -8,6 +8,12 @@
 </p>
 
 <p align="center">
+  <a href="https://f-play-stream.web.app" target="_blank">
+    <img src="https://img.shields.io/badge/LIVE%20WEB%20APP-F--PLAY--STREAM.WEB.APP-e50914?style=for-the-badge&logo=firebase&logoColor=ffffff" alt="Live Web App" />
+  </a>
+</p>
+
+<p align="center">
   <a href="https://github.com/RobsHs/F-Play/stargazers">
     <img src="https://img.shields.io/github/stars/RobsHs/F-Play?style=for-the-badge&logo=github&color=e50914&labelColor=0c0f17" alt="GitHub Stars" />
   </a>
