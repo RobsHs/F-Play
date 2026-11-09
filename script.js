@@ -293,9 +293,14 @@ function toggleMovieFavorite(movie) {
 }
 
 function updateWatchlistBadge() {
+  const favs = getFavorites();
   const countEl = document.getElementById('watchlist-count');
   if (countEl) {
-    countEl.textContent = getFavorites().length;
+    countEl.textContent = favs.length;
+  }
+  const drawerCountEl = document.getElementById('drawer-fav-count');
+  if (drawerCountEl) {
+    drawerCountEl.textContent = favs.length;
   }
 }
 
@@ -343,6 +348,223 @@ function updateAllHeartIcons() {
       btn.setAttribute('title', 'Simpan ke Favorit');
     }
   });
+}
+
+/* --- Watch History Manager (fplay_history_v1) --- */
+const HISTORY_STORAGE_KEY = 'fplay_history_v1';
+
+function getWatchHistory() {
+  try {
+    const raw = localStorage.getItem(HISTORY_STORAGE_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch (e) {
+    console.warn('Gagal membaca riwayat dari localStorage:', e);
+    return [];
+  }
+}
+
+function saveWatchHistory(list) {
+  try {
+    localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(list));
+  } catch (e) {
+    console.warn('Gagal menulis riwayat ke localStorage:', e);
+  }
+}
+
+function updateHistoryBadge() {
+  const list = getWatchHistory();
+  const countEl = document.getElementById('history-count');
+  if (countEl) {
+    countEl.textContent = list.length;
+  }
+  const drawerHistCountEl = document.getElementById('drawer-hist-count');
+  if (drawerHistCountEl) {
+    drawerHistCountEl.textContent = list.length;
+  }
+}
+
+function addToWatchHistory(movie) {
+  if (!movie) return;
+  const tmdbId = String(movie.tmdbId || movie.id);
+  let list = getWatchHistory();
+
+  // Hapus jika sudah pernah ditonton agar posisinya pindah ke paling atas
+  list = list.filter(item => String(item.tmdbId || item.id) !== tmdbId);
+
+  list.unshift({
+    id: movie.id,
+    tmdbId: tmdbId,
+    title: movie.title,
+    year: movie.year || '2026',
+    rating: movie.rating || '8.5',
+    poster: movie.poster || '',
+    duration: movie.duration || 'Lengkap',
+    quality: movie.quality || '4K ULTRA HD',
+    genres: movie.genres || [],
+    trailerId: movie.trailerId || '',
+    synopsis: movie.synopsis || '',
+    watchedAt: Date.now()
+  });
+
+  // Simpan maksimal 50 riwayat tontonan terakhir
+  if (list.length > 50) {
+    list = list.slice(0, 50);
+  }
+
+  saveWatchHistory(list);
+  updateHistoryBadge();
+}
+
+function removeFromWatchHistory(tmdbId) {
+  const targetId = String(tmdbId);
+  let list = getWatchHistory();
+  list = list.filter(item => String(item.tmdbId || item.id) !== targetId);
+  saveWatchHistory(list);
+  updateHistoryBadge();
+  showToast('Film dihapus dari riwayat tontonan.');
+}
+
+function clearWatchHistory() {
+  saveWatchHistory([]);
+  updateHistoryBadge();
+  showToast('Semua riwayat tontonan berhasil dibersihkan.');
+}
+
+function formatRelativeTime(timestamp) {
+  if (!timestamp) return 'Baru saja';
+  const now = Date.now();
+  const diffSec = Math.floor((now - timestamp) / 1000);
+  if (diffSec < 60) return 'Baru saja';
+  const diffMin = Math.floor(diffSec / 60);
+  if (diffMin < 60) return `${diffMin} menit yang lalu`;
+  const diffHours = Math.floor(diffMin / 60);
+  if (diffHours < 24) return `${diffHours} jam yang lalu`;
+  const diffDays = Math.floor(diffHours / 24);
+  if (diffDays === 1) return 'Kemarin';
+  if (diffDays < 7) return `${diffDays} hari yang lalu`;
+  const date = new Date(timestamp);
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+  return `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
+}
+
+/* --- CineStreak Gamification Engine (fplay_streak_v1) --- */
+const STREAK_STORAGE_KEY = 'fplay_streak_v1';
+
+function getLocalDateString(dateObj = new Date()) {
+  const year = dateObj.getFullYear();
+  const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+  const day = String(dateObj.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+function getYesterdayDateString() {
+  const d = new Date();
+  d.setDate(d.getDate() - 1);
+  return getLocalDateString(d);
+}
+
+function getStreakData() {
+  try {
+    const raw = localStorage.getItem(STREAK_STORAGE_KEY);
+    if (raw) {
+      const data = JSON.parse(raw);
+      return {
+        currentStreak: Number(data.currentStreak) || 0,
+        longestStreak: Number(data.longestStreak) || 0,
+        lastWatchDate: data.lastWatchDate || null,
+        watchDates: Array.isArray(data.watchDates) ? data.watchDates : [],
+        totalWatched: Number(data.totalWatched) || 0
+      };
+    }
+  } catch (e) {
+    console.warn('Gagal membaca data streak:', e);
+  }
+  return {
+    currentStreak: 0,
+    longestStreak: 0,
+    lastWatchDate: null,
+    watchDates: [],
+    totalWatched: 0
+  };
+}
+
+function saveStreakData(data) {
+  try {
+    localStorage.setItem(STREAK_STORAGE_KEY, JSON.stringify(data));
+  } catch (e) {
+    console.warn('Gagal menyimpan data streak:', e);
+  }
+}
+
+function updateStreakBadge() {
+  const streakData = getStreakData();
+  const navCountEl = document.getElementById('nav-streak-count');
+  if (navCountEl) {
+    navCountEl.textContent = streakData.currentStreak;
+  }
+}
+
+function initStreak() {
+  const data = getStreakData();
+  const today = getLocalDateString();
+  const yesterday = getYesterdayDateString();
+
+  if (data.lastWatchDate) {
+    if (data.lastWatchDate === today) {
+      // Masih aktif menonton hari ini
+    } else if (data.lastWatchDate === yesterday) {
+      // Streak kemarin masih bertahan, menunggu tontonan hari ini
+    } else {
+      // Lebih dari 1 hari lalu terlewat, streak terputus
+      if (data.currentStreak > 0) {
+        data.currentStreak = 0;
+        saveStreakData(data);
+      }
+    }
+  }
+  updateStreakBadge();
+}
+
+function recordWatchForStreak() {
+  const data = getStreakData();
+  const today = getLocalDateString();
+  const yesterday = getYesterdayDateString();
+
+  data.totalWatched = (data.totalWatched || 0) + 1;
+
+  if (!data.watchDates.includes(today)) {
+    data.watchDates.push(today);
+    if (data.watchDates.length > 45) {
+      data.watchDates = data.watchDates.slice(-45);
+    }
+  }
+
+  if (data.lastWatchDate === today) {
+    // Sudah tercatat menonton hari ini
+    saveStreakData(data);
+    updateStreakBadge();
+    return;
+  }
+
+  if (data.lastWatchDate === yesterday) {
+    data.currentStreak = (data.currentStreak || 0) + 1;
+    data.lastWatchDate = today;
+    if (data.currentStreak > data.longestStreak) {
+      data.longestStreak = data.currentStreak;
+    }
+    saveStreakData(data);
+    updateStreakBadge();
+    showToast(`🔥 CineStreak Naik: ${data.currentStreak} Hari Berturut-turut!`);
+  } else {
+    data.currentStreak = 1;
+    data.lastWatchDate = today;
+    if (data.longestStreak < 1) {
+      data.longestStreak = 1;
+    }
+    saveStreakData(data);
+    updateStreakBadge();
+    showToast('🔥 CineStreak Dimulai: Hari ke-1!');
+  }
 }
 
 /* --- Floating Toast Notification --- */
@@ -539,6 +761,10 @@ async function openPlayerModal(movie, serverMode = 'server1') {
   const loader = document.getElementById('theater-loader');
 
   if (!theaterView || !iframe) return;
+
+  // Catat riwayat tontonan dan perbarui CineStreak gamification
+  addToWatchHistory(movie);
+  recordWatchForStreak();
 
   // Sembunyikan katalog utama, tampilkan bioskop sinematik
   if (homeView) homeView.style.display = 'none';
@@ -1211,7 +1437,9 @@ function submitCommentReply(movieId, parentCommentId, replyText) {
   showToast('Balasan kamu berhasil diposting!');
 }
 
-/* --- Watchlist Drawer Renderer --- */
+/* --- Tabbed Activity Drawer (Favorit & Riwayat Tontonan) --- */
+let activeDrawerTab = 'watchlist';
+
 function renderWatchlistDrawer() {
   const container = document.getElementById('watchlist-grid');
   const emptyState = document.getElementById('watchlist-empty');
@@ -1231,7 +1459,7 @@ function renderWatchlistDrawer() {
         <img src="${movie.poster || FALLBACK_POSTER_SVG}" alt="${movie.title}" class="watchlist-thumb" onerror="this.onerror=null; this.src=FALLBACK_POSTER_SVG;">
         <div class="watchlist-info">
           <h4 class="watchlist-item-title">${movie.title}</h4>
-          <p class="watchlist-item-meta">${movie.year} • ⭐ ${movie.rating}</p>
+          <p class="watchlist-item-meta">${movie.year || '2026'} • ⭐ ${movie.rating || '8.5'}</p>
           <div class="watchlist-item-actions">
             <button class="btn-item-play" data-id="${movie.tmdbId}">Nonton</button>
             <button class="btn-item-remove" data-id="${movie.tmdbId}">Hapus</button>
@@ -1253,8 +1481,88 @@ function renderWatchlistDrawer() {
   }
 }
 
+function renderWatchHistory() {
+  const container = document.getElementById('history-list');
+  const emptyState = document.getElementById('history-empty');
+  const actionsBar = document.getElementById('history-actions-bar');
+  if (!container || !emptyState) return;
+
+  const list = getWatchHistory();
+  updateHistoryBadge();
+  container.innerHTML = '';
+
+  if (list.length === 0) {
+    emptyState.style.display = 'block';
+    if (actionsBar) actionsBar.style.display = 'none';
+  } else {
+    emptyState.style.display = 'none';
+    if (actionsBar) actionsBar.style.display = 'flex';
+
+    list.forEach(movie => {
+      const item = document.createElement('div');
+      item.className = 'history-item';
+      const timeStr = formatRelativeTime(movie.watchedAt);
+      item.innerHTML = `
+        <img src="${movie.poster || FALLBACK_POSTER_SVG}" alt="${movie.title}" class="history-thumb" onerror="this.onerror=null; this.src=FALLBACK_POSTER_SVG;">
+        <div class="history-info">
+          <h4 class="history-item-title">${movie.title}</h4>
+          <p class="history-item-meta">${movie.year || '2026'} • ⭐ ${movie.rating || '8.5'}</p>
+          <div class="history-item-time">Ditonton ${timeStr}</div>
+          <div class="history-item-actions">
+            <button class="btn-item-play" data-id="${movie.tmdbId}">Putar Ulang</button>
+            <button class="btn-item-remove" data-id="${movie.tmdbId}">Hapus</button>
+          </div>
+        </div>
+      `;
+
+      item.querySelector('.btn-item-play').addEventListener('click', () => {
+        closeWatchlistDrawer();
+        openPlayerModal(movie);
+      });
+
+      item.querySelector('.btn-item-remove').addEventListener('click', () => {
+        removeFromWatchHistory(movie.tmdbId);
+        renderWatchHistory();
+      });
+
+      container.appendChild(item);
+    });
+  }
+}
+
+function switchDrawerTab(tabName) {
+  activeDrawerTab = tabName;
+  const tabWatchlist = document.getElementById('tab-btn-watchlist');
+  const tabHistory = document.getElementById('tab-btn-history');
+  const paneWatchlist = document.getElementById('pane-watchlist');
+  const paneHistory = document.getElementById('pane-history');
+
+  if (tabName === 'history') {
+    if (tabWatchlist) tabWatchlist.classList.remove('active');
+    if (tabHistory) tabHistory.classList.add('active');
+    if (paneWatchlist) paneWatchlist.style.display = 'none';
+    if (paneHistory) paneHistory.style.display = 'block';
+    renderWatchHistory();
+  } else {
+    if (tabHistory) tabHistory.classList.remove('active');
+    if (tabWatchlist) tabWatchlist.classList.add('active');
+    if (paneHistory) paneHistory.style.display = 'none';
+    if (paneWatchlist) paneWatchlist.style.display = 'block';
+    renderWatchlistDrawer();
+  }
+}
+
 function openWatchlistDrawer() {
-  renderWatchlistDrawer();
+  switchDrawerTab('watchlist');
+  const drawer = document.getElementById('watchlist-drawer');
+  if (drawer) {
+    drawer.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  }
+}
+
+function openHistoryDrawer() {
+  switchDrawerTab('history');
   const drawer = document.getElementById('watchlist-drawer');
   if (drawer) {
     drawer.style.display = 'flex';
@@ -1266,6 +1574,131 @@ function closeWatchlistDrawer() {
   const drawer = document.getElementById('watchlist-drawer');
   if (drawer) {
     drawer.style.display = 'none';
+    document.body.style.overflow = '';
+  }
+}
+
+/* --- CineStreak Gamification Modal Controller --- */
+function renderStreakModal() {
+  const data = getStreakData();
+  const today = getLocalDateString();
+
+  // 1. Update Hero Counter & Tagline
+  const countEl = document.getElementById('modal-streak-count');
+  const taglineEl = document.getElementById('modal-streak-tagline');
+  if (countEl) countEl.textContent = data.currentStreak;
+
+  if (taglineEl) {
+    if (data.currentStreak === 0) {
+      taglineEl.textContent = 'Mulai petualanganmu hari ini! Tonton minimal 1 film untuk menyalakan api CineStreak kamu.';
+    } else if (data.currentStreak === 1) {
+      taglineEl.textContent = 'Awal yang membara! Tonton 1 film lagi besok untuk mempertahankan apimu.';
+    } else if (data.currentStreak < 7) {
+      taglineEl.textContent = `Hebat! Kamu sudah ${data.currentStreak} hari berturut-turut menikmati sinema F-Play.`;
+    } else if (data.currentStreak < 14) {
+      taglineEl.textContent = `Luar biasa! Konsistensi ${data.currentStreak} hari tanpa putus. Kamu seorang maraton sejati!`;
+    } else {
+      taglineEl.textContent = `Legenda Cinephile! Api streak kamu berkobar selama ${data.currentStreak} hari berturut-turut!`;
+    }
+  }
+
+  // 2. 7-Day Activity Matrix (6 hari lalu sampai hari ini)
+  const gridEl = document.getElementById('streak-week-grid');
+  if (gridEl) {
+    gridEl.innerHTML = '';
+    const dayNames = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
+    const now = new Date();
+
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(now.getDate() - i);
+      const dateStr = getLocalDateString(d);
+      const dayName = dayNames[d.getDay()];
+      const isToday = dateStr === today;
+      const isWatched = data.watchDates.includes(dateStr);
+
+      const chip = document.createElement('div');
+      chip.className = `streak-day-chip${isWatched ? ' active' : ''}${isToday ? ' today' : ''}`;
+      chip.title = `${dayName}, ${dateStr}${isWatched ? ' (Menonton)' : ' (Belum menonton)'}`;
+
+      chip.innerHTML = `
+        <span class="streak-day-name">${isToday ? 'Kini' : dayName}</span>
+        <span class="streak-day-icon">${isWatched ? '🔥' : '⚪'}</span>
+      `;
+      gridEl.appendChild(chip);
+    }
+  }
+
+  // 3. Tiers & Cinephile Achievements
+  const tiersEl = document.getElementById('streak-tiers-list');
+  if (tiersEl) {
+    tiersEl.innerHTML = '';
+    const tiers = [
+      {
+        icon: '🍿',
+        name: 'Penonton Santai',
+        req: 'Tonton minimal 1 film di F-Play',
+        unlocked: data.totalWatched >= 1 || data.currentStreak >= 1
+      },
+      {
+        icon: '🎬',
+        name: 'Penggemar Sinema',
+        req: 'Streak aktif mencapai 3 hari berturut-turut',
+        unlocked: data.currentStreak >= 3 || data.longestStreak >= 3
+      },
+      {
+        icon: '🏆',
+        name: 'Maraton Master',
+        req: 'Streak aktif mencapai 7 hari berturut-turut',
+        unlocked: data.currentStreak >= 7 || data.longestStreak >= 7
+      },
+      {
+        icon: '💎',
+        name: 'Cinephile Sejati',
+        req: 'Streak aktif mencapai 14 hari berturut-turut',
+        unlocked: data.currentStreak >= 14 || data.longestStreak >= 14
+      },
+      {
+        icon: '👑',
+        name: 'Legenda Layar Lebar',
+        req: 'Streak aktif mencapai 30 hari berturut-turut',
+        unlocked: data.currentStreak >= 30 || data.longestStreak >= 30
+      }
+    ];
+
+    tiers.forEach(t => {
+      const row = document.createElement('div');
+      row.className = `streak-tier-item${t.unlocked ? ' unlocked' : ''}`;
+      row.innerHTML = `
+        <div class="streak-tier-info">
+          <span class="streak-tier-icon">${t.icon}</span>
+          <div>
+            <div class="streak-tier-name">${t.name}</div>
+            <div class="streak-tier-req">${t.req}</div>
+          </div>
+        </div>
+        <span class="streak-tier-badge ${t.unlocked ? 'unlocked' : 'locked'}">
+          ${t.unlocked ? '✓ TERBUKA' : 'TERKUNCI'}
+        </span>
+      `;
+      tiersEl.appendChild(row);
+    });
+  }
+}
+
+function openStreakModal() {
+  renderStreakModal();
+  const modal = document.getElementById('streak-modal');
+  if (modal) {
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  }
+}
+
+function closeStreakModal() {
+  const modal = document.getElementById('streak-modal');
+  if (modal) {
+    modal.style.display = 'none';
     document.body.style.overflow = '';
   }
 }
@@ -1441,10 +1874,15 @@ function setupEventListeners() {
     });
   }
 
-  // 3. Watchlist Drawer
+  // 3. Watchlist & History Activity Drawer
   const btnOpenWatchlist = document.getElementById('btn-open-watchlist');
   if (btnOpenWatchlist) {
     btnOpenWatchlist.addEventListener('click', openWatchlistDrawer);
+  }
+
+  const btnOpenHistory = document.getElementById('btn-open-history');
+  if (btnOpenHistory) {
+    btnOpenHistory.addEventListener('click', openHistoryDrawer);
   }
 
   const btnCloseWatchlist = document.getElementById('btn-close-watchlist');
@@ -1455,6 +1893,45 @@ function setupEventListeners() {
   const watchlistBackdrop = document.getElementById('watchlist-backdrop-btn');
   if (watchlistBackdrop) {
     watchlistBackdrop.addEventListener('click', closeWatchlistDrawer);
+  }
+
+  const tabBtnWatchlist = document.getElementById('tab-btn-watchlist');
+  if (tabBtnWatchlist) {
+    tabBtnWatchlist.addEventListener('click', () => switchDrawerTab('watchlist'));
+  }
+
+  const tabBtnHistory = document.getElementById('tab-btn-history');
+  if (tabBtnHistory) {
+    tabBtnHistory.addEventListener('click', () => switchDrawerTab('history'));
+  }
+
+  const btnClearHistory = document.getElementById('btn-clear-history');
+  if (btnClearHistory) {
+    btnClearHistory.addEventListener('click', () => {
+      clearWatchHistory();
+      renderWatchHistory();
+    });
+  }
+
+  // 3b. CineStreak Gamification Modal
+  const btnOpenStreak = document.getElementById('btn-open-streak');
+  if (btnOpenStreak) {
+    btnOpenStreak.addEventListener('click', openStreakModal);
+  }
+
+  const btnCloseStreak = document.getElementById('btn-close-streak');
+  if (btnCloseStreak) {
+    btnCloseStreak.addEventListener('click', closeStreakModal);
+  }
+
+  const streakBackdrop = document.getElementById('streak-backdrop-btn');
+  if (streakBackdrop) {
+    streakBackdrop.addEventListener('click', closeStreakModal);
+  }
+
+  const btnStreakContinue = document.getElementById('btn-streak-continue');
+  if (btnStreakContinue) {
+    btnStreakContinue.addEventListener('click', closeStreakModal);
   }
 
 
@@ -1543,6 +2020,7 @@ function setupEventListeners() {
     if (e.key === 'Escape') {
       closePlayerModal();
       closeWatchlistDrawer();
+      closeStreakModal();
     } else if (e.key === '/' && document.activeElement !== searchInput) {
       e.preventDefault();
       if (searchInput) searchInput.focus();
@@ -1681,6 +2159,10 @@ function setupEventListeners() {
 /* --- App Bootstrapper --- */
 document.addEventListener('DOMContentLoaded', async () => {
   setupEventListeners();
+  updateWatchlistBadge();
+  updateHistoryBadge();
+  initStreak();
+
   await loadAllSections();
 
   // Cek deep link jika URL memiliki hash tontonan (contoh: #watch-533535)

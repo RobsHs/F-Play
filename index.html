@@ -44,6 +44,13 @@
           <button class="search-clear-btn" id="search-clear" aria-label="Hapus Pencarian" title="Hapus Pencarian">&times;</button>
         </div>
 
+        <!-- CineStreak Button -->
+        <button class="btn-streak" id="btn-open-streak" title="CineStreak: Lihat Streak Tontonan Kamu">
+          <span class="streak-flame" aria-hidden="true">🔥</span>
+          <span class="streak-count" id="nav-streak-count">0</span>
+          <span class="btn-text">Hari</span>
+        </button>
+
         <!-- Watchlist Button -->
         <button class="btn-watchlist" id="btn-open-watchlist" title="Lihat Daftar Favorit">
           <svg class="heart-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -51,6 +58,16 @@
           </svg>
           <span class="btn-text">Favorit</span>
           <span class="watchlist-badge" id="watchlist-count">0</span>
+        </button>
+
+        <!-- Watch History Button -->
+        <button class="btn-history" id="btn-open-history" title="Lihat Riwayat Tontonan">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+          <span class="btn-text">Riwayat</span>
+          <span class="history-badge" id="history-count">0</span>
         </button>
       </div>
     </div>
@@ -400,25 +417,90 @@
 
   </main>
 
-  <!-- Watchlist Drawer / Modal -->
-  <div class="watchlist-drawer" id="watchlist-drawer" role="dialog" aria-modal="true" aria-labelledby="watchlist-title" style="display: none;">
+  <!-- Activity Drawer (Favorit & Riwayat Tontonan) -->
+  <div class="watchlist-drawer" id="watchlist-drawer" role="dialog" aria-modal="true" aria-labelledby="activity-drawer-title" style="display: none;">
     <div class="drawer-backdrop" id="watchlist-backdrop-btn"></div>
     <div class="drawer-content">
       <div class="drawer-header">
-        <div class="drawer-title-box">
-          <svg class="heart-icon icon-red" viewBox="0 0 24 24" fill="currentColor" width="22" height="22">
-            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-          </svg>
-          <h2 class="drawer-title" id="watchlist-title">Daftar Tontonan Saya</h2>
+        <div class="drawer-tabs" role="tablist">
+          <button class="drawer-tab active" id="tab-btn-watchlist" role="tab" aria-selected="true" data-tab="watchlist">
+            <svg class="heart-icon icon-red" viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+            </svg>
+            <span>Favorit (<span id="drawer-fav-count">0</span>)</span>
+          </button>
+          <button class="drawer-tab" id="tab-btn-history" role="tab" aria-selected="false" data-tab="history">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            <span>Riwayat (<span id="drawer-hist-count">0</span>)</span>
+          </button>
         </div>
-        <button class="drawer-close-btn" id="btn-close-watchlist" aria-label="Tutup Daftar Favorit">&times;</button>
+        <button class="drawer-close-btn" id="btn-close-watchlist" aria-label="Tutup Panel">&times;</button>
       </div>
-      <div class="drawer-body">
+
+      <!-- Tab Pane 1: Favorit -->
+      <div class="drawer-body tab-pane active" id="pane-watchlist">
         <div class="watchlist-grid" id="watchlist-grid"></div>
         <div class="empty-state" id="watchlist-empty">
           <div class="empty-icon">🍿</div>
           <h3>Daftar Favorit Masih Kosong</h3>
           <p>Belum ada film yang kamu simpan. Klik ikon hati pada poster film apa saja untuk menyimpannya di sini.</p>
+        </div>
+      </div>
+
+      <!-- Tab Pane 2: Riwayat Tontonan -->
+      <div class="drawer-body tab-pane" id="pane-history" style="display: none;">
+        <div class="history-actions-bar" id="history-actions-bar" style="display: none;">
+          <span class="history-meta-text">Tersimpan otomatis di peramban</span>
+          <button type="button" class="btn-clear-history" id="btn-clear-history">Bersihkan Semua</button>
+        </div>
+        <div class="history-list" id="history-list"></div>
+        <div class="empty-state" id="history-empty">
+          <div class="empty-icon">🕒</div>
+          <h3>Belum Ada Riwayat Tontonan</h3>
+          <p>Film yang kamu putar akan otomatis tercatat di sini sehingga kamu bisa melanjutkannya kapan saja.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CineStreak Gamification Modal -->
+  <div class="streak-modal" id="streak-modal" role="dialog" aria-modal="true" aria-labelledby="streak-title" style="display: none;">
+    <div class="streak-backdrop" id="streak-backdrop-btn"></div>
+    <div class="streak-dialog">
+      <div class="streak-modal-header">
+        <div class="streak-header-tag">
+          <span class="streak-tag-dot"></span>
+          <span>CINESTREAK // AKTIVITAS NONTON</span>
+        </div>
+        <button class="streak-close-btn" id="btn-close-streak" aria-label="Tutup Dialog Streak">&times;</button>
+      </div>
+
+      <div class="streak-modal-body">
+        <!-- Hero Flame Card -->
+        <div class="streak-hero-card">
+          <div class="streak-flame-large">🔥</div>
+          <div class="streak-hero-count" id="modal-streak-count">0</div>
+          <h3 class="streak-hero-title" id="streak-title">Hari Berturut-turut!</h3>
+          <p class="streak-hero-tagline" id="modal-streak-tagline">Tonton minimal 1 film setiap hari untuk mempertahankan apimu.</p>
+        </div>
+
+        <!-- Weekly 7-Day Matrix -->
+        <div class="streak-week-section">
+          <h4 class="streak-subheading">Aktivitas 7 Hari Terakhir</h4>
+          <div class="streak-week-grid" id="streak-week-grid"></div>
+        </div>
+
+        <!-- Cinephile Rank Badges / Tiers -->
+        <div class="streak-tiers-section">
+          <h4 class="streak-subheading">Peringkat &amp; Pencapaian Sinefil</h4>
+          <div class="streak-tiers-list" id="streak-tiers-list"></div>
+        </div>
+
+        <div class="streak-modal-footer">
+          <button type="button" class="btn btn-primary btn-block" id="btn-streak-continue">Lanjut Nonton Film</button>
         </div>
       </div>
     </div>
