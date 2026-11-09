@@ -675,50 +675,130 @@ function renderTheaterRecommendations(current) {
 
 /* ==========================================================================
    YouTube-Style Interactive Community Comments Engine
+   Generator Prosedural dengan Ratusan Ribu Kemungkinan Variasi Unik
    ========================================================================== */
-const SEED_COMMENTS_POOL = [
-  {
-    author: 'Reza_Cinema',
-    text: 'Plot twist di pertengahan beneran di luar dugaan, sinematografinya 10/10!',
-    likes: 42,
-    timeAgo: '2 jam yang lalu',
-    timestamp: Date.now() - 7200000,
-    replies: [
-      { author: 'DimasF', text: 'Setuju banget, pas adegan malamnya gokil visualnya.', timeAgo: '1 jam yang lalu' }
-    ]
-  },
-  {
-    author: 'NontonYuk',
-    text: 'Kualitas streaming di Server 1 lancar banget di HP, audionya juga jernih tanpa delay.',
-    likes: 29,
-    timeAgo: '4 jam yang lalu',
-    timestamp: Date.now() - 14400000,
-    replies: []
-  },
-  {
-    author: 'Siti_MovieReview',
-    text: 'Salah satu film terbaik tahun ini, akting pemeran utamanya dapet banget emosinya. Wajib ditonton!',
-    likes: 19,
-    timeAgo: '1 hari yang lalu',
-    timestamp: Date.now() - 86400000,
-    replies: []
-  },
-  {
-    author: 'Alif_Filmgeek',
-    text: 'Soundtrack film ini juara, bikin suasana teater bioskop makin berasa di telinga.',
-    likes: 14,
-    timeAgo: '2 hari yang lalu',
-    timestamp: Date.now() - 172800000,
-    replies: []
-  },
-  {
-    author: 'Budi_Santoso',
-    text: 'Baru pertama kali nonton di F-Play, gila gaada iklan pop-up yang mengganggu sama sekali. Mantap!',
-    likes: 35,
-    timeAgo: '3 hari yang lalu',
-    timestamp: Date.now() - 259200000,
-    replies: []
-  }
+const COMMENT_AUTHORS_POOL = [
+  'Reza_Sinema', 'DimasPratama', 'AdityaCine', 'Fajar_G', 'Budi_MovieID', 'BayuKusuma',
+  'Naufal_Film', 'SatriaNusantara', 'Aris_W', 'KevinKurnia', 'AldoRev', 'Bintang_Cinephile',
+  'IlhamSantoso', 'Andi_LayarKaca', 'Rafi_Director', 'Siti_Review', 'Dewi_Sinematik', 'Nadia_Filmlover',
+  'AlyaCine', 'Maya_Popcorn', 'Salsabila_K', 'RaniCinema', 'Putri_MovieBuff', 'CinemaAddictID',
+  'MovieGeek_ID', 'LayarLebar21', 'KritikusSantai', 'NontonTerus', 'WibuSinema', 'MaratonFilm',
+  'CinephileID', 'FilmEnak', 'BioskopMania', 'LensaSinema', 'SudutKamera', 'DuniaSinema',
+  'PecintaKarya', 'KolektorFilm', 'ReviewJujur', 'SukaFilm', 'PenontonSetia', 'PenggemarSinema',
+  'CineZoneID', 'KritikSantuy', 'FilmManiaID', 'RizalCinema', 'Hendra_Movie', 'Fikri_Film'
+];
+
+const COMMENT_OPENERS_POOL = [
+  'Gila sih ini film,',
+  'Beneran ga nyangka,',
+  'Baru beres nonton dan jujur,',
+  'Salah satu rilisan paling berkesan,',
+  'Asli ini keren banget,',
+  'Ekspektasi awal biasa aja, tapi pas ditonton',
+  'Dari awal sampai akhir ceritanya',
+  'Buat yang belum nonton,',
+  'Jujur sempet ragu di awal, tapi ternyata',
+  'Keren parah pokoknya,',
+  'Salut banget sama sutradara dan cast-nya,',
+  'Pengalaman nonton yang beneran memuaskan,',
+  'Plotnya bener-bener dieksekusi dengan matang,',
+  'Udah lama ga ngerasain sensasi nonton seseru ini,',
+  'Akting dan visualnya bener-bener padu,',
+  'Karakter utamanya kuat banget karismanya,',
+  'Nonton di F-Play berasa layar bioskop pribadi,',
+  'Timing ceritanya beneran pas banget,',
+  'Detail kecil di setiap adegannya dipikirin matang,',
+  'Visual effects sama audio mixing-nya berkelas dunia,',
+  'Gokil sih dari awal sampe akhir,',
+  'Ga salah banyak yang rekomendasiin film ini,',
+  'Bener-bener ga kerasa durasinya udah abis,',
+  'Salah satu karya sinema paling bernyawa,'
+];
+
+const COMMENT_BODIES_POOL = [
+  'plot twist di babak kedua beneran bikin melongo dan ga ketebak sama sekali.',
+  'pacing ceritanya rapi banget, ga ada bagian yang bertele-tele atau ngebosenin.',
+  'sinematografinya megah dan pencahayaan setiap adegannya artistik banget.',
+  'karakterisasinya dapet banget, penonton beneran diajak peduli sama nasib karakternya.',
+  'adegan aksinya beneran intens dan koreografinya fluid tanpa goyangan kamera berlebih.',
+  'emosi ceritanya dapet banget, sampe bikin merinding di 20 menit terakhir.',
+  'soundtrack dan scoring musiknya bener-bener ngangkat tensi film ke level berikutnya.',
+  'dialognya berbobot dan kerasa natural, ga ada kesan kaku sama sekali.',
+  'world-building sama suasananya kerasa hidup dan meyakinkan dari awal tayang.',
+  'konflik moral di ceritanya bikin mikir panjang bahkan setelah filmnya tamat.',
+  'visual efeknya mulus banget, detail CGI di adegan klimaksnya luar biasa rapi.',
+  'pemeran utamanya bener-bener totalitas, ekspresinya natural dan sangat menyentuh.',
+  'koreografi dan tata suaranya enak banget didenger pake earphone atau speaker.',
+  'alur misterinya rapi, setiap petunjuk di awal akhirnya kejawab dengan memuaskan.',
+  'komedinya segar dan ga maksa, tapi pesan emosionalnya tetep ngena ke hati.',
+  'beneran ngerasain atmosfer mencekam dari pembuka sampai penutupan adegan.',
+  'alur ceritanya bikin penasaran dari menit pertama sampai kredit bergulir.',
+  'kombinasi drama dan aksinya proporsional banget tanpa terasa timpang.',
+  'transisi antar adegannya halus banget, editingnya layak dapet apresiasi tinggi.',
+  'penyelesaian konflik di adegan puncaknya terasa sangat pantas dan melegakan.',
+  'penjiwaan aktornya juara, tiap tatapan dan intonasi dialognya kerasa dari hati.',
+  'eksplorasi temanya berani dan fresh, beda dari film sejenis pada umumnya.',
+  'adegan heningnya justru yang paling dalem dan ngasih dampak emosional kuat.',
+  'kualitas gambarnya tajem banget di F-Play, warna-warna gelapnya ga pecah.',
+  'arah kameranya puitis tapi tetep gampang diikuti tanpa bikin pusing.',
+  'endingnya bener-bener nempel di kepala, bukan tipe film yang gampang dilupain.',
+  'tiap karakter pendukung punya porsi peran yang pas dan ga cuma jadi pajangan.',
+  'build-up ketegangannya terencana banget, nafas berasa ikut ketahan pas klimaks.',
+  'desain produksinya jempolan, kostum dan tata artistiknya detail banget.',
+  'dinamika relasi antar tokohnya berkembang alami dan sangat meyakinkan.',
+  'banyak adegan ikonik yang bakal terus diingat para pecinta film.',
+  'eksekusi konsepnya matang dari menit awal sampai konklusi akhir.'
+];
+
+const COMMENT_CLOSERS_POOL = [
+  'Wajib banget masuk daftar tontonan wajib minggu ini!',
+  'Bakal gua tonton ulang lagi bareng temen-temen besok.',
+  'Rating pribadi dari gua solid 9/10, sangat direkomendasikan!',
+  'Server 1 di F-Play juga jernih banget tanpa macet sedikitpun, mantap.',
+  'Bener-bener pengalaman nonton 10/10 tanpa gangguan iklan sama sekali.',
+  'Ga nyesel luangin waktu 2 jam buat mahakarya satu ini.',
+  'Definisi film yang bakal tetep relevan bertahun-tahun ke depan.',
+  'Buat yang masih ragu, langsung tonton sekarang juga sebelum kena spoiler.',
+  'Salut buat F-Play yang nyediain kualitas se-HD ini secara gratis!',
+  'Pasti bakal jadi salah satu film favorit sepanjang masa di watchlist gua.',
+  'Bagus banget, cocok ditonton sendirian atau rame-rame pas weekend.',
+  'Layak dapet penghargaan di festival film internasional, gokil.',
+  'Kualitas audionya jernih, dialog terdengar jelas tanpa distorsi.',
+  'Jangan diskip, tonton sampai bener-bener selesai biar dapet feel-nya.',
+  'Auto masuk deretan film terbaik tahun ini versi gua pribadi.',
+  'Semoga ada sekuel atau cerita lanjutan dengan standar kualitas yang sama!',
+  'Puas banget nontonnya, ga sia-sia nungguin rilisnya.',
+  'Keren abis, rekomen banget buat kalian yang suka cerita berbobot.'
+];
+
+const REPLY_TEMPLATES_POOL = [
+  { text: 'Setuju banget bro, terutama pas adegan klimaksnya beneran merinding!' },
+  { text: 'Bener, Server 1 sama Server 2 lancar pol di HP tanpa buffering sama sekali.' },
+  { text: 'Gua nonton dari kemarin malem masih terngiang-ngiang sama endingnya.' },
+  { text: 'Iya parah, sinematografinya level bioskop kelas atas.' },
+  { text: 'Awalnya mikir biasa aja, pas udah setengah jalan langsung gabisa berhenti nonton.' },
+  { text: 'Sama! Akting pemeran utamanya emang ga pernah gagal bikin takjub.' },
+  { text: 'Tips: pake headset biar audio dolby-nya makin berasa menggelegar.' },
+  { text: 'Udah gua share link film ini ke grup temen-temen, pada ketagihan juga.' },
+  { text: 'Valid banget ulasannya, salah satu film paling berkesan tahun ini.' },
+  { text: 'Sepakat, bagian twist-nya emang beneran gila dan di luar nalar.' },
+  { text: 'Kualitas 1080p di sini bening banget, ga nyesel streaming di F-Play.' },
+  { text: 'Haha bener, gua sampe ga sempet buka cemilan saking fokusnya.' }
+];
+
+const TIME_AGO_POOL = [
+  { label: '14 menit yang lalu', ms: 14 * 60000 },
+  { label: '35 menit yang lalu', ms: 35 * 60000 },
+  { label: '1 jam yang lalu', ms: 3600000 },
+  { label: '2 jam yang lalu', ms: 2 * 3600000 },
+  { label: '4 jam yang lalu', ms: 4 * 3600000 },
+  { label: '7 jam yang lalu', ms: 7 * 3600000 },
+  { label: '12 jam yang lalu', ms: 12 * 3600000 },
+  { label: '1 hari yang lalu', ms: 86400000 },
+  { label: '2 hari yang lalu', ms: 2 * 86400000 },
+  { label: '3 hari yang lalu', ms: 3 * 86400000 },
+  { label: '5 hari yang lalu', ms: 5 * 86400000 },
+  { label: '1 minggu yang lalu', ms: 7 * 86400000 }
 ];
 
 const AVATAR_PALETTE = [
@@ -741,6 +821,85 @@ function getAvatarColor(name) {
 
 let activeCommentSort = 'top';
 
+function createPrng(seedStr) {
+  let h = 2166136261 >>> 0;
+  for (let i = 0; i < seedStr.length; i++) {
+    h = Math.imul(h ^ seedStr.charCodeAt(i), 16777619);
+  }
+  return function() {
+    h += 0x6D2B79F5;
+    let t = Math.imul(h ^ (h >>> 15), 1 | h);
+    t = t + Math.imul(t ^ (t >>> 7), 61 | t) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+function generateDynamicMovieComments(movieId) {
+  const rng = createPrng(`fplay_seed_${movieId}_v2`);
+  const pick = (arr) => arr[Math.floor(rng() * arr.length)];
+  const pickIndex = (arr, usedIndices) => {
+    let idx = Math.floor(rng() * arr.length);
+    let attempts = 0;
+    while (usedIndices.has(idx) && attempts < 10) {
+      idx = (idx + 1) % arr.length;
+      attempts++;
+    }
+    usedIndices.add(idx);
+    return arr[idx];
+  };
+
+  // Jumlah komentar per film: antara 5 sampai 8 komentar
+  const commentCount = 5 + Math.floor(rng() * 4);
+  const usedAuthors = new Set();
+  const usedBodies = new Set();
+  const comments = [];
+
+  const now = Date.now();
+
+  for (let i = 0; i < commentCount; i++) {
+    const author = pickIndex(COMMENT_AUTHORS_POOL, usedAuthors);
+    const opener = pick(COMMENT_OPENERS_POOL);
+    const body = pickIndex(COMMENT_BODIES_POOL, usedBodies);
+    const closer = pick(COMMENT_CLOSERS_POOL);
+    const fullText = `${opener} ${body} ${closer}`;
+
+    const timeObj = TIME_AGO_POOL[Math.min(TIME_AGO_POOL.length - 1, i + Math.floor(rng() * 3))];
+    const likes = 8 + Math.floor(rng() * 85) + (i === 0 ? 40 : 0);
+
+    // 1 atau 2 komentar pertama memiliki balasan komunitas
+    const hasReplies = (i === 0 || (i === 1 && rng() > 0.35));
+    const replies = [];
+    if (hasReplies) {
+      const replyCount = 1 + (rng() > 0.5 ? 1 : 0);
+      const usedReplyAuthors = new Set([author]);
+      for (let r = 0; r < replyCount; r++) {
+        const replyAuthor = pickIndex(COMMENT_AUTHORS_POOL, usedReplyAuthors);
+        const replyTpl = pick(REPLY_TEMPLATES_POOL);
+        replies.push({
+          id: `rep_${movieId}_${i}_${r}`,
+          author: replyAuthor,
+          text: replyTpl.text,
+          timeAgo: 'Baru saja'
+        });
+      }
+    }
+
+    comments.push({
+      id: `gen_${movieId}_${i}`,
+      author: author,
+      text: fullText,
+      likes: likes,
+      dislikes: 0,
+      timeAgo: timeObj.label,
+      timestamp: now - timeObj.ms,
+      isCritic: i === 0,
+      replies: replies
+    });
+  }
+
+  return comments;
+}
+
 function getUserReactions() {
   try {
     const raw = localStorage.getItem('fplay_user_reactions_v1');
@@ -759,7 +918,7 @@ function saveUserReactions(reactions) {
 }
 
 function getMovieComments(movieId) {
-  const key = `fplay_comments_v1_${movieId}`;
+  const key = `fplay_comments_v2_${movieId}`;
   try {
     const raw = localStorage.getItem(key);
     if (raw) {
@@ -770,36 +929,20 @@ function getMovieComments(movieId) {
     console.warn('Gagal memuat komentar dari localStorage:', e);
   }
 
-  // Generate Deterministic Seed Comments untuk film ini
-  const numId = parseInt(String(movieId).replace(/\D/g, '') || '1', 10);
-  const shuffled = SEED_COMMENTS_POOL.map((c, idx) => ({
-    id: `seed_${movieId}_${idx}`,
-    author: c.author,
-    text: c.text,
-    likes: c.likes + (numId % 7),
-    dislikes: 0,
-    timeAgo: c.timeAgo,
-    timestamp: c.timestamp,
-    isCritic: idx === 0,
-    replies: (c.replies || []).map((r, rIdx) => ({
-      id: `rep_${movieId}_${idx}_${rIdx}`,
-      author: r.author,
-      text: r.text,
-      timeAgo: r.timeAgo
-    }))
-  }));
+  // Generate ribuan kemungkinan komentar deterministik untuk film ini
+  const dynamicComments = generateDynamicMovieComments(movieId);
 
   try {
-    localStorage.setItem(key, JSON.stringify(shuffled));
+    localStorage.setItem(key, JSON.stringify(dynamicComments));
   } catch (e) {
-    console.warn('Gagal menyimpan seed komentar:', e);
+    console.warn('Gagal menyimpan komentar ke localStorage:', e);
   }
 
-  return shuffled;
+  return dynamicComments;
 }
 
 function saveMovieComments(movieId, list) {
-  const key = `fplay_comments_v1_${movieId}`;
+  const key = `fplay_comments_v2_${movieId}`;
   try {
     localStorage.setItem(key, JSON.stringify(list));
   } catch (e) {
