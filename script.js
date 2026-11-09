@@ -381,6 +381,10 @@ function updateHistoryBadge() {
   if (drawerHistCountEl) {
     drawerHistCountEl.textContent = list.length;
   }
+  const totalCountEl = document.getElementById('history-total-count');
+  if (totalCountEl) {
+    totalCountEl.textContent = `${list.length} Film`;
+  }
 }
 
 function addToWatchHistory(movie) {
@@ -501,6 +505,18 @@ function updateStreakBadge() {
   const navCountEl = document.getElementById('nav-streak-count');
   if (navCountEl) {
     navCountEl.textContent = streakData.currentStreak;
+  }
+  const drawerStreakCountEl = document.getElementById('drawer-streak-count');
+  if (drawerStreakCountEl) {
+    drawerStreakCountEl.textContent = streakData.currentStreak;
+  }
+  const bigCountDrawer = document.getElementById('drawer-streak-big-count');
+  if (bigCountDrawer) {
+    bigCountDrawer.textContent = streakData.currentStreak;
+  }
+  const bigCountModal = document.getElementById('modal-streak-count');
+  if (bigCountModal) {
+    bigCountModal.textContent = streakData.currentStreak;
   }
 }
 
@@ -1503,27 +1519,67 @@ function renderWatchHistory() {
       item.className = 'history-item';
       const timeStr = formatRelativeTime(movie.watchedAt);
       item.innerHTML = `
-        <img src="${movie.poster || FALLBACK_POSTER_SVG}" alt="${movie.title}" class="history-thumb" onerror="this.onerror=null; this.src=FALLBACK_POSTER_SVG;">
+        <div class="history-thumb-wrapper" title="Putar Ulang: ${movie.title}">
+          <img src="${movie.poster || FALLBACK_POSTER_SVG}" alt="${movie.title}" class="history-thumb" onerror="this.onerror=null; this.src=FALLBACK_POSTER_SVG;">
+          <div class="history-play-overlay">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+              <polygon points="5 3 19 12 5 21 5 3"></polygon>
+            </svg>
+          </div>
+          <div class="history-progress-bar"><div class="history-progress-fill" style="width: 100%;"></div></div>
+        </div>
         <div class="history-info">
-          <h4 class="history-item-title">${movie.title}</h4>
-          <p class="history-item-meta">${movie.year || '2026'} • ⭐ ${movie.rating || '8.5'}</p>
-          <div class="history-item-time">Ditonton ${timeStr}</div>
-          <div class="history-item-actions">
-            <button class="btn-item-play" data-id="${movie.tmdbId}">Putar Ulang</button>
-            <button class="btn-item-remove" data-id="${movie.tmdbId}">Hapus</button>
+          <div class="history-item-top">
+            <h4 class="history-item-title" title="${movie.title}">${movie.title}</h4>
+            <button type="button" class="btn-history-remove" data-id="${movie.tmdbId}" title="Hapus dari riwayat">&times;</button>
+          </div>
+          <div class="history-item-meta">
+            <span class="history-badge-year">${movie.year || '2026'}</span>
+            <span class="history-badge-rating">⭐ ${movie.rating || '8.5'}</span>
+            <span class="history-badge-quality">${movie.quality || '4K'}</span>
+          </div>
+          <div class="history-item-footer">
+            <span class="history-item-time">
+              <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+              ${timeStr}
+            </span>
+            <button type="button" class="btn-history-resume" data-id="${movie.tmdbId}">
+              <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor">
+                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+              </svg>
+              <span>Putar Ulang</span>
+            </button>
           </div>
         </div>
       `;
 
-      item.querySelector('.btn-item-play').addEventListener('click', () => {
+      // Event listener: putar film saat thumbnail, title, atau tombol putar ulang diklik
+      const triggerPlay = () => {
         closeWatchlistDrawer();
         openPlayerModal(movie);
-      });
+      };
 
-      item.querySelector('.btn-item-remove').addEventListener('click', () => {
-        removeFromWatchHistory(movie.tmdbId);
-        renderWatchHistory();
-      });
+      const thumbWrapper = item.querySelector('.history-thumb-wrapper');
+      if (thumbWrapper) thumbWrapper.addEventListener('click', triggerPlay);
+
+      const titleEl = item.querySelector('.history-item-title');
+      if (titleEl) titleEl.addEventListener('click', triggerPlay);
+
+      const resumeBtn = item.querySelector('.btn-history-resume');
+      if (resumeBtn) resumeBtn.addEventListener('click', triggerPlay);
+
+      // Event listener: hapus film dari riwayat
+      const removeBtn = item.querySelector('.btn-history-remove');
+      if (removeBtn) {
+        removeBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          removeFromWatchHistory(movie.tmdbId);
+          renderWatchHistory();
+        });
+      }
 
       container.appendChild(item);
     });
@@ -1532,42 +1588,71 @@ function renderWatchHistory() {
 
 function switchDrawerTab(tabName) {
   activeDrawerTab = tabName;
-  const tabWatchlist = document.getElementById('tab-btn-watchlist');
+  const tabStreak = document.getElementById('tab-btn-streak');
   const tabHistory = document.getElementById('tab-btn-history');
-  const paneWatchlist = document.getElementById('pane-watchlist');
-  const paneHistory = document.getElementById('pane-history');
+  const tabWatchlist = document.getElementById('tab-btn-watchlist');
 
-  if (tabName === 'history') {
-    if (tabWatchlist) tabWatchlist.classList.remove('active');
-    if (tabHistory) tabHistory.classList.add('active');
-    if (paneWatchlist) paneWatchlist.style.display = 'none';
-    if (paneHistory) paneHistory.style.display = 'block';
-    renderWatchHistory();
-  } else {
-    if (tabHistory) tabHistory.classList.remove('active');
-    if (tabWatchlist) tabWatchlist.classList.add('active');
-    if (paneHistory) paneHistory.style.display = 'none';
+  const paneStreak = document.getElementById('pane-streak');
+  const paneHistory = document.getElementById('pane-history');
+  const paneWatchlist = document.getElementById('pane-watchlist');
+
+  // Reset active classes
+  [tabStreak, tabHistory, tabWatchlist].forEach(t => {
+    if (t) {
+      t.classList.remove('active');
+      t.setAttribute('aria-selected', 'false');
+    }
+  });
+
+  // Hide panes
+  [paneStreak, paneHistory, paneWatchlist].forEach(p => {
+    if (p) p.style.display = 'none';
+  });
+
+  if (tabName === 'streak') {
+    if (tabStreak) {
+      tabStreak.classList.add('active');
+      tabStreak.setAttribute('aria-selected', 'true');
+    }
+    if (paneStreak) paneStreak.style.display = 'block';
+    renderStreakContent();
+  } else if (tabName === 'watchlist') {
+    if (tabWatchlist) {
+      tabWatchlist.classList.add('active');
+      tabWatchlist.setAttribute('aria-selected', 'true');
+    }
     if (paneWatchlist) paneWatchlist.style.display = 'block';
     renderWatchlistDrawer();
+  } else {
+    // Default: history
+    if (tabHistory) {
+      tabHistory.classList.add('active');
+      tabHistory.setAttribute('aria-selected', 'true');
+    }
+    if (paneHistory) paneHistory.style.display = 'block';
+    renderWatchHistory();
+  }
+}
+
+function openActivityDrawer(tabName = 'history') {
+  switchDrawerTab(tabName);
+  const drawer = document.getElementById('watchlist-drawer');
+  if (drawer) {
+    drawer.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
   }
 }
 
 function openWatchlistDrawer() {
-  switchDrawerTab('watchlist');
-  const drawer = document.getElementById('watchlist-drawer');
-  if (drawer) {
-    drawer.style.display = 'flex';
-    document.body.style.overflow = 'hidden';
-  }
+  openActivityDrawer('watchlist');
 }
 
 function openHistoryDrawer() {
-  switchDrawerTab('history');
-  const drawer = document.getElementById('watchlist-drawer');
-  if (drawer) {
-    drawer.style.display = 'flex';
-    document.body.style.overflow = 'hidden';
-  }
+  openActivityDrawer('history');
+}
+
+function openStreakDrawer() {
+  openActivityDrawer('streak');
 }
 
 function closeWatchlistDrawer() {
@@ -1578,33 +1663,61 @@ function closeWatchlistDrawer() {
   }
 }
 
-/* --- CineStreak Gamification Modal Controller --- */
-function renderStreakModal() {
+/* --- CineStreak Content & Gamification Controller --- */
+function renderStreakContent() {
   const data = getStreakData();
   const today = getLocalDateString();
 
-  // 1. Update Hero Counter & Tagline
-  const countEl = document.getElementById('modal-streak-count');
-  const taglineEl = document.getElementById('modal-streak-tagline');
-  if (countEl) countEl.textContent = data.currentStreak;
+  // 1. Update Counter & Tagline in Drawer & Modal
+  const countElements = [
+    document.getElementById('drawer-streak-big-count'),
+    document.getElementById('modal-streak-count'),
+    document.getElementById('nav-streak-count')
+  ];
+  countElements.forEach(el => {
+    if (el) el.textContent = data.currentStreak;
+  });
 
-  if (taglineEl) {
-    if (data.currentStreak === 0) {
-      taglineEl.textContent = 'Mulai petualanganmu hari ini! Tonton minimal 1 film untuk menyalakan api CineStreak kamu.';
-    } else if (data.currentStreak === 1) {
-      taglineEl.textContent = 'Awal yang membara! Tonton 1 film lagi besok untuk mempertahankan apimu.';
-    } else if (data.currentStreak < 7) {
-      taglineEl.textContent = `Hebat! Kamu sudah ${data.currentStreak} hari berturut-turut menikmati sinema F-Play.`;
-    } else if (data.currentStreak < 14) {
-      taglineEl.textContent = `Luar biasa! Konsistensi ${data.currentStreak} hari tanpa putus. Kamu seorang maraton sejati!`;
-    } else {
-      taglineEl.textContent = `Legenda Cinephile! Api streak kamu berkobar selama ${data.currentStreak} hari berturut-turut!`;
-    }
+  const drawerStreakCountEl = document.getElementById('drawer-streak-count');
+  if (drawerStreakCountEl) {
+    drawerStreakCountEl.textContent = data.currentStreak;
   }
 
-  // 2. 7-Day Activity Matrix (6 hari lalu sampai hari ini)
-  const gridEl = document.getElementById('streak-week-grid');
-  if (gridEl) {
+  const longestEl = document.getElementById('drawer-streak-longest');
+  if (longestEl) longestEl.textContent = `${data.longestStreak} Hari`;
+
+  const totalEl = document.getElementById('drawer-streak-total');
+  if (totalEl) totalEl.textContent = `${data.totalWatched} Film`;
+
+  let taglineText = '';
+  if (data.currentStreak === 0) {
+    taglineText = 'Mulai petualanganmu hari ini! Tonton minimal 1 film untuk menyalakan api CineStreak kamu.';
+  } else if (data.currentStreak === 1) {
+    taglineText = 'Awal yang membara! Tonton 1 film lagi besok untuk mempertahankan apimu.';
+  } else if (data.currentStreak < 7) {
+    taglineText = `Hebat! Kamu sudah ${data.currentStreak} hari berturut-turut menikmati sinema F-Play.`;
+  } else if (data.currentStreak < 14) {
+    taglineText = `Luar biasa! Konsistensi ${data.currentStreak} hari tanpa putus. Kamu seorang maraton sejati!`;
+  } else {
+    taglineText = `Legenda Cinephile! Api streak kamu berkobar selama ${data.currentStreak} hari berturut-turut!`;
+  }
+
+  const taglineElements = [
+    document.getElementById('drawer-streak-tagline'),
+    document.getElementById('modal-streak-tagline')
+  ];
+  taglineElements.forEach(el => {
+    if (el) el.textContent = taglineText;
+  });
+
+  // 2. 7-Day Activity Matrix
+  const gridContainers = [
+    document.getElementById('drawer-streak-week-grid'),
+    document.getElementById('streak-week-grid')
+  ];
+
+  gridContainers.forEach(gridEl => {
+    if (!gridEl) return;
     gridEl.innerHTML = '';
     const dayNames = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
     const now = new Date();
@@ -1627,45 +1740,50 @@ function renderStreakModal() {
       `;
       gridEl.appendChild(chip);
     }
-  }
+  });
 
   // 3. Tiers & Cinephile Achievements
-  const tiersEl = document.getElementById('streak-tiers-list');
-  if (tiersEl) {
-    tiersEl.innerHTML = '';
-    const tiers = [
-      {
-        icon: '🍿',
-        name: 'Penonton Santai',
-        req: 'Tonton minimal 1 film di F-Play',
-        unlocked: data.totalWatched >= 1 || data.currentStreak >= 1
-      },
-      {
-        icon: '🎬',
-        name: 'Penggemar Sinema',
-        req: 'Streak aktif mencapai 3 hari berturut-turut',
-        unlocked: data.currentStreak >= 3 || data.longestStreak >= 3
-      },
-      {
-        icon: '🏆',
-        name: 'Maraton Master',
-        req: 'Streak aktif mencapai 7 hari berturut-turut',
-        unlocked: data.currentStreak >= 7 || data.longestStreak >= 7
-      },
-      {
-        icon: '💎',
-        name: 'Cinephile Sejati',
-        req: 'Streak aktif mencapai 14 hari berturut-turut',
-        unlocked: data.currentStreak >= 14 || data.longestStreak >= 14
-      },
-      {
-        icon: '👑',
-        name: 'Legenda Layar Lebar',
-        req: 'Streak aktif mencapai 30 hari berturut-turut',
-        unlocked: data.currentStreak >= 30 || data.longestStreak >= 30
-      }
-    ];
+  const tiersContainers = [
+    document.getElementById('drawer-streak-tiers-list'),
+    document.getElementById('streak-tiers-list')
+  ];
 
+  const tiers = [
+    {
+      icon: '🍿',
+      name: 'Penonton Santai',
+      req: 'Tonton minimal 1 film di F-Play',
+      unlocked: data.totalWatched >= 1 || data.currentStreak >= 1
+    },
+    {
+      icon: '🎬',
+      name: 'Penggemar Sinema',
+      req: 'Streak aktif mencapai 3 hari berturut-turut',
+      unlocked: data.currentStreak >= 3 || data.longestStreak >= 3
+    },
+    {
+      icon: '🏆',
+      name: 'Maraton Master',
+      req: 'Streak aktif mencapai 7 hari berturut-turut',
+      unlocked: data.currentStreak >= 7 || data.longestStreak >= 7
+    },
+    {
+      icon: '💎',
+      name: 'Cinephile Sejati',
+      req: 'Streak aktif mencapai 14 hari berturut-turut',
+      unlocked: data.currentStreak >= 14 || data.longestStreak >= 14
+    },
+    {
+      icon: '👑',
+      name: 'Legenda Layar Lebar',
+      req: 'Streak aktif mencapai 30 hari berturut-turut',
+      unlocked: data.currentStreak >= 30 || data.longestStreak >= 30
+    }
+  ];
+
+  tiersContainers.forEach(tiersEl => {
+    if (!tiersEl) return;
+    tiersEl.innerHTML = '';
     tiers.forEach(t => {
       const row = document.createElement('div');
       row.className = `streak-tier-item${t.unlocked ? ' unlocked' : ''}`;
@@ -1683,16 +1801,15 @@ function renderStreakModal() {
       `;
       tiersEl.appendChild(row);
     });
-  }
+  });
+}
+
+function renderStreakModal() {
+  renderStreakContent();
 }
 
 function openStreakModal() {
-  renderStreakModal();
-  const modal = document.getElementById('streak-modal');
-  if (modal) {
-    modal.style.display = 'flex';
-    document.body.style.overflow = 'hidden';
-  }
+  openStreakDrawer();
 }
 
 function closeStreakModal() {
@@ -1893,6 +2010,11 @@ function setupEventListeners() {
   const watchlistBackdrop = document.getElementById('watchlist-backdrop-btn');
   if (watchlistBackdrop) {
     watchlistBackdrop.addEventListener('click', closeWatchlistDrawer);
+  }
+
+  const tabBtnStreak = document.getElementById('tab-btn-streak');
+  if (tabBtnStreak) {
+    tabBtnStreak.addEventListener('click', () => switchDrawerTab('streak'));
   }
 
   const tabBtnWatchlist = document.getElementById('tab-btn-watchlist');
