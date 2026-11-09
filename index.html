@@ -343,6 +343,47 @@
         </div>
       </div>
 
+      <!-- YouTube-Style Interactive Community Comments Section -->
+      <section class="theater-comments-section" id="theater-comments-section">
+        <div class="comments-header">
+          <div class="comments-header-left">
+            <h3 class="comments-title">
+              <span id="comments-count">0</span> Komentar Komunitas
+            </h3>
+            <div class="comments-sort-group" role="group" aria-label="Urutkan Komentar">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="12" x2="15" y2="12"></line>
+                <line x1="3" y1="18" x2="9" y2="18"></line>
+              </svg>
+              <button class="btn-comment-sort active" id="btn-sort-top" data-sort="top">Terpopuler</button>
+              <button class="btn-comment-sort" id="btn-sort-new" data-sort="new">Terbaru</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Add Comment Form (YouTube Style) -->
+        <div class="comment-create-box">
+          <div class="comment-user-avatar" id="comment-current-avatar">U</div>
+          <div class="comment-form-wrapper">
+            <div class="comment-author-row">
+              <input type="text" id="comment-author-name" class="comment-author-input" placeholder="Nama samaran (opsional)..." maxlength="30" aria-label="Nama Pengirim">
+            </div>
+            <textarea id="comment-input-text" class="comment-textarea" placeholder="Tambahkan komentar atau ulasan film ini..." rows="1" aria-label="Tulis Komentar"></textarea>
+            <div class="comment-form-actions" id="comment-form-actions">
+              <span class="comment-char-hint">Ulas tanpa spoiler dan hargai sesama penonton</span>
+              <div class="comment-buttons-group">
+                <button type="button" class="btn btn-glass btn-sm" id="btn-comment-cancel">Batal</button>
+                <button type="button" class="btn btn-primary btn-sm" id="btn-comment-submit" disabled>Beri Komentar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Comments Stream List -->
+        <div class="comments-list" id="comments-list"></div>
+      </section>
+
       <!-- Recommended / Up Next Row -->
       <section class="theater-recommendations">
         <div class="section-header">

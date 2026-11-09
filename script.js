@@ -626,6 +626,9 @@ async function openPlayerModal(movie, serverMode = 'server1') {
   // Render Rekomendasi Film di Bawah Player
   renderTheaterRecommendations(movie);
 
+  // Render Komentar Komunitas Gaya YouTube
+  renderMovieComments(movie.tmdbId || movie.id);
+
   // Update Status Ikon Favorit
   updateAllHeartIcons();
 
@@ -668,6 +671,401 @@ function renderTheaterRecommendations(current) {
     fragment.appendChild(createMovieCard(m));
   });
   container.appendChild(fragment);
+}
+
+/* ==========================================================================
+   YouTube-Style Interactive Community Comments Engine
+   ========================================================================== */
+const SEED_COMMENTS_POOL = [
+  {
+    author: 'Reza_Cinema',
+    text: 'Plot twist di pertengahan beneran di luar dugaan, sinematografinya 10/10!',
+    likes: 42,
+    timeAgo: '2 jam yang lalu',
+    timestamp: Date.now() - 7200000,
+    replies: [
+      { author: 'DimasF', text: 'Setuju banget, pas adegan malamnya gokil visualnya.', timeAgo: '1 jam yang lalu' }
+    ]
+  },
+  {
+    author: 'NontonYuk',
+    text: 'Kualitas streaming di Server 1 lancar banget di HP, audionya juga jernih tanpa delay.',
+    likes: 29,
+    timeAgo: '4 jam yang lalu',
+    timestamp: Date.now() - 14400000,
+    replies: []
+  },
+  {
+    author: 'Siti_MovieReview',
+    text: 'Salah satu film terbaik tahun ini, akting pemeran utamanya dapet banget emosinya. Wajib ditonton!',
+    likes: 19,
+    timeAgo: '1 hari yang lalu',
+    timestamp: Date.now() - 86400000,
+    replies: []
+  },
+  {
+    author: 'Alif_Filmgeek',
+    text: 'Soundtrack film ini juara, bikin suasana teater bioskop makin berasa di telinga.',
+    likes: 14,
+    timeAgo: '2 hari yang lalu',
+    timestamp: Date.now() - 172800000,
+    replies: []
+  },
+  {
+    author: 'Budi_Santoso',
+    text: 'Baru pertama kali nonton di F-Play, gila gaada iklan pop-up yang mengganggu sama sekali. Mantap!',
+    likes: 35,
+    timeAgo: '3 hari yang lalu',
+    timestamp: Date.now() - 259200000,
+    replies: []
+  }
+];
+
+const AVATAR_PALETTE = [
+  'linear-gradient(135deg, #e50914, #990000)',
+  'linear-gradient(135deg, #2563eb, #1d4ed8)',
+  'linear-gradient(135deg, #059669, #047857)',
+  'linear-gradient(135deg, #7c3aed, #6d28d9)',
+  'linear-gradient(135deg, #ea580c, #c2410c)',
+  'linear-gradient(135deg, #0891b2, #0e7490)'
+];
+
+function getAvatarColor(name) {
+  const str = String(name || 'Pengunjung');
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = str.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  return AVATAR_PALETTE[Math.abs(hash) % AVATAR_PALETTE.length];
+}
+
+let activeCommentSort = 'top';
+
+function getUserReactions() {
+  try {
+    const raw = localStorage.getItem('fplay_user_reactions_v1');
+    return raw ? JSON.parse(raw) : { likes: {}, dislikes: {} };
+  } catch (e) {
+    return { likes: {}, dislikes: {} };
+  }
+}
+
+function saveUserReactions(reactions) {
+  try {
+    localStorage.setItem('fplay_user_reactions_v1', JSON.stringify(reactions));
+  } catch (e) {
+    console.warn('Gagal menyimpan reaksi komentar:', e);
+  }
+}
+
+function getMovieComments(movieId) {
+  const key = `fplay_comments_v1_${movieId}`;
+  try {
+    const raw = localStorage.getItem(key);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    }
+  } catch (e) {
+    console.warn('Gagal memuat komentar dari localStorage:', e);
+  }
+
+  // Generate Deterministic Seed Comments untuk film ini
+  const numId = parseInt(String(movieId).replace(/\D/g, '') || '1', 10);
+  const shuffled = SEED_COMMENTS_POOL.map((c, idx) => ({
+    id: `seed_${movieId}_${idx}`,
+    author: c.author,
+    text: c.text,
+    likes: c.likes + (numId % 7),
+    dislikes: 0,
+    timeAgo: c.timeAgo,
+    timestamp: c.timestamp,
+    isCritic: idx === 0,
+    replies: (c.replies || []).map((r, rIdx) => ({
+      id: `rep_${movieId}_${idx}_${rIdx}`,
+      author: r.author,
+      text: r.text,
+      timeAgo: r.timeAgo
+    }))
+  }));
+
+  try {
+    localStorage.setItem(key, JSON.stringify(shuffled));
+  } catch (e) {
+    console.warn('Gagal menyimpan seed komentar:', e);
+  }
+
+  return shuffled;
+}
+
+function saveMovieComments(movieId, list) {
+  const key = `fplay_comments_v1_${movieId}`;
+  try {
+    localStorage.setItem(key, JSON.stringify(list));
+  } catch (e) {
+    console.warn('Gagal menyimpan komentar:', e);
+  }
+}
+
+function renderMovieComments(movieId, sortMode = activeCommentSort) {
+  activeCommentSort = sortMode;
+  const listEl = document.getElementById('comments-list');
+  const countEl = document.getElementById('comments-count');
+  if (!listEl) return;
+
+  const comments = getMovieComments(movieId);
+  const reactions = getUserReactions();
+
+  // Hitung total komentar termasuk balasan
+  let totalCount = comments.length;
+  comments.forEach(c => {
+    if (Array.isArray(c.replies)) totalCount += c.replies.length;
+  });
+
+  if (countEl) countEl.textContent = totalCount;
+
+  // Update status tombol sort
+  const btnTop = document.getElementById('btn-sort-top');
+  const btnNew = document.getElementById('btn-sort-new');
+  if (btnTop && btnNew) {
+    btnTop.classList.toggle('active', sortMode === 'top');
+    btnNew.classList.toggle('active', sortMode === 'new');
+  }
+
+  // Urutkan komentar
+  const sorted = [...comments].sort((a, b) => {
+    if (sortMode === 'top') {
+      return (b.likes || 0) - (a.likes || 0);
+    } else {
+      return (b.timestamp || 0) - (a.timestamp || 0);
+    }
+  });
+
+  listEl.innerHTML = '';
+  const fragment = document.createDocumentFragment();
+
+  sorted.forEach(comment => {
+    const isLiked = !!(reactions.likes && reactions.likes[comment.id]);
+    const isDisliked = !!(reactions.dislikes && reactions.dislikes[comment.id]);
+    const avatarBg = getAvatarColor(comment.author);
+    const initial = (comment.author || 'P').charAt(0).toUpperCase();
+
+    const item = document.createElement('div');
+    item.className = 'comment-item';
+    item.dataset.id = comment.id;
+
+    // Render Balasan Jika Ada
+    let repliesHtml = '';
+    if (Array.isArray(comment.replies) && comment.replies.length > 0) {
+      const repliesItems = comment.replies.map(r => `
+        <div class="reply-item">
+          <div class="reply-item-avatar" style="background:${getAvatarColor(r.author)};">${(r.author || 'U').charAt(0).toUpperCase()}</div>
+          <div class="reply-item-content">
+            <div class="reply-item-header">
+              <strong class="comment-author-name">${escapeCommentHtml(r.author)}</strong>
+              <span class="comment-timestamp">${r.timeAgo || 'Baru saja'}</span>
+            </div>
+            <p class="reply-item-text">${escapeCommentHtml(r.text)}</p>
+          </div>
+        </div>
+      `).join('');
+
+      repliesHtml = `
+        <div class="comment-replies-container">
+          ${repliesItems}
+        </div>
+      `;
+    }
+
+    item.innerHTML = `
+      <div class="comment-item-avatar" style="background:${avatarBg};">${initial}</div>
+      <div class="comment-item-content">
+        <div class="comment-item-header">
+          <span class="comment-author-name">${escapeCommentHtml(comment.author)}</span>
+          ${comment.isCritic ? '<span class="comment-badge-critic">Ulasan Populer</span>' : ''}
+          <span class="comment-timestamp">${comment.timeAgo || 'Baru saja'}</span>
+        </div>
+        <p class="comment-item-text">${escapeCommentHtml(comment.text)}</p>
+        <div class="comment-item-actions">
+          <button class="btn-comment-action btn-like ${isLiked ? 'liked' : ''}" aria-label="Suka komentar">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path>
+            </svg>
+            <span class="like-count">${comment.likes || 0}</span>
+          </button>
+          <button class="btn-comment-action btn-dislike ${isDisliked ? 'disliked' : ''}" aria-label="Tidak suka komentar">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h3a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-3"></path>
+            </svg>
+          </button>
+          <button class="btn-comment-action btn-reply">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <polyline points="9 17 4 12 9 7"></polyline>
+              <path d="M20 18v-2a4 4 0 0 0-4-4H4"></path>
+            </svg>
+            <span>Balas</span>
+          </button>
+        </div>
+
+        <!-- Inline Reply Form (Tersembunyi secara default) -->
+        <div class="comment-reply-form" style="display:none;">
+          <input type="text" class="comment-reply-input" placeholder="Tulis balasan publik..." maxlength="200">
+          <button type="button" class="btn btn-primary btn-sm btn-submit-reply">Kirim</button>
+          <button type="button" class="btn btn-glass btn-sm btn-cancel-reply">Batal</button>
+        </div>
+
+        ${repliesHtml}
+      </div>
+    `;
+
+    // Event: Like
+    const likeBtn = item.querySelector('.btn-like');
+    likeBtn.addEventListener('click', () => {
+      toggleCommentLike(movieId, comment.id, item);
+    });
+
+    // Event: Dislike
+    const dislikeBtn = item.querySelector('.btn-dislike');
+    dislikeBtn.addEventListener('click', () => {
+      toggleCommentDislike(movieId, comment.id, item);
+    });
+
+    // Event: Buka Form Balas
+    const replyBtn = item.querySelector('.btn-reply');
+    const replyForm = item.querySelector('.comment-reply-form');
+    const replyInput = item.querySelector('.comment-reply-input');
+    const submitReplyBtn = item.querySelector('.btn-submit-reply');
+    const cancelReplyBtn = item.querySelector('.btn-cancel-reply');
+
+    replyBtn.addEventListener('click', () => {
+      const isVisible = replyForm.style.display !== 'none';
+      replyForm.style.display = isVisible ? 'none' : 'flex';
+      if (!isVisible && replyInput) replyInput.focus();
+    });
+
+    cancelReplyBtn.addEventListener('click', () => {
+      replyForm.style.display = 'none';
+      if (replyInput) replyInput.value = '';
+    });
+
+    submitReplyBtn.addEventListener('click', () => {
+      const replyText = replyInput.value.trim();
+      if (!replyText) return;
+      submitCommentReply(movieId, comment.id, replyText);
+    });
+
+    if (replyInput) {
+      replyInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          submitReplyBtn.click();
+        }
+      });
+    }
+
+    fragment.appendChild(item);
+  });
+
+  listEl.appendChild(fragment);
+}
+
+function escapeCommentHtml(text) {
+  if (!text) return '';
+  return String(text).replace(/[&<>"']/g, (m) => {
+    switch (m) {
+      case '&': return '&amp;';
+      case '<': return '&lt;';
+      case '>': return '&gt;';
+      case '"': return '&quot;';
+      case "'": return '&#39;';
+      default: return m;
+    }
+  });
+}
+
+function toggleCommentLike(movieId, commentId, itemEl) {
+  const comments = getMovieComments(movieId);
+  const target = comments.find(c => c.id === commentId);
+  if (!target) return;
+
+  const reactions = getUserReactions();
+  reactions.likes = reactions.likes || {};
+  reactions.dislikes = reactions.dislikes || {};
+
+  const wasLiked = !!reactions.likes[commentId];
+  if (wasLiked) {
+    delete reactions.likes[commentId];
+    target.likes = Math.max(0, (target.likes || 1) - 1);
+  } else {
+    reactions.likes[commentId] = true;
+    target.likes = (target.likes || 0) + 1;
+    if (reactions.dislikes[commentId]) {
+      delete reactions.dislikes[commentId];
+    }
+  }
+
+  saveUserReactions(reactions);
+  saveMovieComments(movieId, comments);
+
+  const likeBtn = itemEl.querySelector('.btn-like');
+  const dislikeBtn = itemEl.querySelector('.btn-dislike');
+  const countEl = itemEl.querySelector('.like-count');
+
+  if (likeBtn) likeBtn.classList.toggle('liked', !wasLiked);
+  if (dislikeBtn) dislikeBtn.classList.remove('disliked');
+  if (countEl) countEl.textContent = target.likes;
+}
+
+function toggleCommentDislike(movieId, commentId, itemEl) {
+  const reactions = getUserReactions();
+  reactions.likes = reactions.likes || {};
+  reactions.dislikes = reactions.dislikes || {};
+
+  const wasDisliked = !!reactions.dislikes[commentId];
+  if (wasDisliked) {
+    delete reactions.dislikes[commentId];
+  } else {
+    reactions.dislikes[commentId] = true;
+    if (reactions.likes[commentId]) {
+      delete reactions.likes[commentId];
+      const comments = getMovieComments(movieId);
+      const target = comments.find(c => c.id === commentId);
+      if (target) {
+        target.likes = Math.max(0, (target.likes || 1) - 1);
+        saveMovieComments(movieId, comments);
+        const countEl = itemEl.querySelector('.like-count');
+        if (countEl) countEl.textContent = target.likes;
+      }
+    }
+  }
+
+  saveUserReactions(reactions);
+  const likeBtn = itemEl.querySelector('.btn-like');
+  const dislikeBtn = itemEl.querySelector('.btn-dislike');
+
+  if (dislikeBtn) dislikeBtn.classList.toggle('disliked', !wasDisliked);
+  if (likeBtn) likeBtn.classList.remove('liked');
+}
+
+function submitCommentReply(movieId, parentCommentId, replyText) {
+  const comments = getMovieComments(movieId);
+  const target = comments.find(c => c.id === parentCommentId);
+  if (!target) return;
+
+  target.replies = target.replies || [];
+  const authorInput = document.getElementById('comment-author-name');
+  const author = (authorInput && authorInput.value.trim()) || localStorage.getItem('fplay_preferred_author') || 'Penonton F-Play';
+
+  target.replies.push({
+    id: `rep_${Date.now()}`,
+    author: author,
+    text: replyText,
+    timeAgo: 'Baru saja'
+  });
+
+  saveMovieComments(movieId, comments);
+  renderMovieComments(movieId, activeCommentSort);
+  showToast('Balasan kamu berhasil diposting!');
 }
 
 /* --- Watchlist Drawer Renderer --- */
@@ -1033,6 +1431,106 @@ function setupEventListeners() {
       const btnResetEl = document.getElementById('btn-reset-filter');
       if (btnResetEl) btnResetEl.click();
       window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
+
+  // 11. YouTube-Style Community Comments Handlers
+  const commentInput = document.getElementById('comment-input-text');
+  const commentAuthor = document.getElementById('comment-author-name');
+  const commentAvatar = document.getElementById('comment-current-avatar');
+  const btnCommentSubmit = document.getElementById('btn-comment-submit');
+  const btnCommentCancel = document.getElementById('btn-comment-cancel');
+  const btnSortTop = document.getElementById('btn-sort-top');
+  const btnSortNew = document.getElementById('btn-sort-new');
+
+  // Load preferred author name from storage
+  const savedAuthor = localStorage.getItem('fplay_preferred_author');
+  if (savedAuthor && commentAuthor) {
+    commentAuthor.value = savedAuthor;
+    if (commentAvatar) {
+      commentAvatar.textContent = savedAuthor.charAt(0).toUpperCase();
+      commentAvatar.style.background = getAvatarColor(savedAuthor);
+    }
+  }
+
+  if (commentAuthor) {
+    commentAuthor.addEventListener('input', (e) => {
+      const val = e.target.value.trim();
+      if (val) {
+        localStorage.setItem('fplay_preferred_author', val);
+        if (commentAvatar) {
+          commentAvatar.textContent = val.charAt(0).toUpperCase();
+          commentAvatar.style.background = getAvatarColor(val);
+        }
+      } else {
+        if (commentAvatar) {
+          commentAvatar.textContent = 'U';
+          commentAvatar.style.background = 'linear-gradient(135deg, #e50914, #8b0000)';
+        }
+      }
+    });
+  }
+
+  if (commentInput) {
+    commentInput.addEventListener('input', () => {
+      commentInput.style.height = 'auto';
+      commentInput.style.height = Math.min(commentInput.scrollHeight, 180) + 'px';
+
+      const hasText = commentInput.value.trim().length > 0;
+      if (btnCommentSubmit) btnCommentSubmit.disabled = !hasText;
+    });
+  }
+
+  if (btnCommentCancel && commentInput) {
+    btnCommentCancel.addEventListener('click', () => {
+      commentInput.value = '';
+      commentInput.style.height = 'auto';
+      if (btnCommentSubmit) btnCommentSubmit.disabled = true;
+    });
+  }
+
+  if (btnCommentSubmit && commentInput) {
+    btnCommentSubmit.addEventListener('click', () => {
+      const text = commentInput.value.trim();
+      if (!text || !currentMovie) return;
+
+      const author = (commentAuthor && commentAuthor.value.trim()) || localStorage.getItem('fplay_preferred_author') || 'Penonton F-Play';
+      const movieId = currentMovie.tmdbId || currentMovie.id;
+
+      const newComment = {
+        id: `c_${Date.now()}`,
+        author: author,
+        text: text,
+        likes: 0,
+        dislikes: 0,
+        timeAgo: 'Baru saja',
+        timestamp: Date.now(),
+        isCritic: false,
+        replies: []
+      };
+
+      const comments = getMovieComments(movieId);
+      comments.unshift(newComment);
+      saveMovieComments(movieId, comments);
+
+      commentInput.value = '';
+      commentInput.style.height = 'auto';
+      btnCommentSubmit.disabled = true;
+
+      renderMovieComments(movieId, activeCommentSort);
+      showToast('Komentar kamu berhasil dipublikasikan!');
+    });
+  }
+
+  if (btnSortTop) {
+    btnSortTop.addEventListener('click', () => {
+      if (currentMovie) renderMovieComments(currentMovie.tmdbId || currentMovie.id, 'top');
+    });
+  }
+
+  if (btnSortNew) {
+    btnSortNew.addEventListener('click', () => {
+      if (currentMovie) renderMovieComments(currentMovie.tmdbId || currentMovie.id, 'new');
     });
   }
 }

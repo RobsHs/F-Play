@@ -1279,6 +1279,375 @@ input:focus-visible {
   line-height: 1.7;
 }
 
+/* ==========================================================================
+   YouTube-Style Theater Comments Section
+   ========================================================================== */
+.theater-comments-section {
+  max-width: 1240px;
+  margin: 1.25rem auto 2.5rem auto;
+  width: 100%;
+  padding: 0 1.25rem;
+}
+
+.comments-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.comments-header-left {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.comments-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.2px;
+}
+
+.comments-sort-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--color-text-muted);
+}
+
+.btn-comment-sort {
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  font-family: var(--font-main);
+  font-size: 0.825rem;
+  font-weight: 600;
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.btn-comment-sort:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.btn-comment-sort.active {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.14);
+}
+
+/* Add Comment Form Box (YouTube Style) */
+.comment-create-box {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+  background: rgba(22, 26, 36, 0.55);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  transition: border-color var(--transition-fast);
+}
+
+.comment-create-box:focus-within {
+  border-color: rgba(229, 9, 20, 0.4);
+}
+
+.comment-user-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #e50914, #8b0000);
+  color: #fff;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(229, 9, 20, 0.3);
+}
+
+.comment-form-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.comment-author-row {
+  display: flex;
+  align-items: center;
+}
+
+.comment-author-input {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  color: #fff;
+  font-family: var(--font-main);
+  font-size: 0.85rem;
+  padding: 0.3rem 0;
+  width: 220px;
+  max-width: 100%;
+  transition: border-color var(--transition-fast);
+}
+
+.comment-author-input:focus {
+  outline: none;
+  border-bottom-color: var(--color-accent);
+}
+
+.comment-textarea {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 1.5px solid rgba(255, 255, 255, 0.15);
+  color: #fff;
+  font-family: var(--font-main);
+  font-size: 0.925rem;
+  line-height: 1.5;
+  padding: 0.4rem 0;
+  resize: none;
+  min-height: 38px;
+  overflow-y: hidden;
+  transition: border-color var(--transition-fast);
+}
+
+.comment-textarea:focus {
+  outline: none;
+  border-bottom-color: var(--color-accent);
+}
+
+.comment-form-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 0.35rem;
+}
+
+.comment-char-hint {
+  font-size: 0.75rem;
+  color: var(--color-text-dim);
+}
+
+.comment-buttons-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.comment-buttons-group .btn {
+  min-height: 38px;
+  padding: 0.4rem 0.95rem;
+  font-size: 0.825rem;
+}
+
+/* Comments List Stream */
+.comments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.comment-item {
+  display: flex;
+  gap: 1rem;
+  animation: commentFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes commentFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.comment-item-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  color: #fff;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.comment-item-content {
+  flex: 1;
+}
+
+.comment-item-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+  flex-wrap: wrap;
+}
+
+.comment-author-name {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.comment-badge-critic {
+  background: rgba(229, 9, 20, 0.2);
+  border: 1px solid rgba(229, 9, 20, 0.4);
+  color: #ff4d5a;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.1rem 0.4rem;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+}
+
+.comment-timestamp {
+  font-size: 0.75rem;
+  color: var(--color-text-dim);
+}
+
+.comment-item-text {
+  font-size: 0.925rem;
+  color: #e2e8f0;
+  line-height: 1.55;
+  margin-bottom: 0.45rem;
+  word-break: break-word;
+}
+
+/* YouTube Style Action Buttons (Thumbs Up, Down, Reply) */
+.comment-item-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.25rem;
+}
+
+.btn-comment-action {
+  background: transparent;
+  border: none;
+  color: var(--color-text-muted);
+  font-family: var(--font-main);
+  font-size: 0.8rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.65rem;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  min-height: 36px;
+}
+
+.btn-comment-action:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
+.btn-comment-action.liked {
+  color: #e50914;
+}
+
+.btn-comment-action.liked svg {
+  fill: #e50914;
+}
+
+.btn-comment-action.disliked {
+  color: #949db0;
+}
+
+.btn-comment-action.disliked svg {
+  fill: #949db0;
+}
+
+/* Reply Sub-Section & Thread */
+.comment-replies-container {
+  margin-top: 0.75rem;
+  padding-left: 0.85rem;
+  border-left: 2px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.comment-reply-form {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+  background: rgba(22, 26, 36, 0.4);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 0.75rem;
+}
+
+.comment-reply-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  color: #fff;
+  font-family: var(--font-main);
+  font-size: 0.85rem;
+  padding: 0.3rem 0;
+}
+
+.comment-reply-input:focus {
+  outline: none;
+  border-bottom-color: var(--color-accent);
+}
+
+.reply-item {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.reply-item-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  color: #fff;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.reply-item-content {
+  flex: 1;
+}
+
+.reply-item-header {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.15rem;
+}
+
+.reply-item-text {
+  font-size: 0.85rem;
+  color: #cbd5e1;
+  line-height: 1.45;
+}
+
 /* Theater Recommendations Section */
 .theater-recommendations {
   max-width: 1240px;
@@ -1656,6 +2025,59 @@ input:focus-visible {
   .theater-action-group .btn {
     flex: 1;
     justify-content: center;
+  }
+
+  /* Comments Mobile Tweaks */
+  .theater-comments-section {
+    padding: 0 0.85rem;
+    margin-top: 1rem;
+    margin-bottom: 1.75rem;
+  }
+
+  .comment-create-box {
+    padding: 0.95rem;
+    gap: 0.75rem;
+  }
+
+  .comment-user-avatar {
+    width: 36px;
+    height: 36px;
+    font-size: 0.95rem;
+  }
+
+  .comment-author-input {
+    width: 100%;
+  }
+
+  .comment-form-actions {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.65rem;
+  }
+
+  .comment-buttons-group {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .comment-buttons-group .btn {
+    flex: 1;
+    justify-content: center;
+  }
+
+  .comment-item {
+    gap: 0.75rem;
+  }
+
+  .comment-item-avatar {
+    width: 34px;
+    height: 34px;
+    font-size: 0.85rem;
+  }
+
+  .btn-comment-action {
+    padding: 0.35rem 0.55rem;
+    font-size: 0.78rem;
   }
 
   .theater-recommendations {
